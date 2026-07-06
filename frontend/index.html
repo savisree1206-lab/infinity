@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Infinite Services – Powering Technology</title>
+  <meta name="description" content="Infinite Services offers Electronics Repair, Web Development, and Scrap Innovation. Three stones. Three powers. Infinite possibilities." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="portal.css" />
+</head>
+<body>
+  <!-- Particle Canvas -->
+  <canvas id="particleCanvas"></canvas>
+
+  <!-- NAV -->
+  <nav id="navbar">
+    <div class="nav-inner">
+      <a href="#home" class="nav-logo" id="nav-logo-link" style="display:flex; align-items:center;">
+        <svg width="70" height="70" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="100" cy="100" r="95" fill="#000000" stroke="#d4af37" stroke-width="6"/>
+          <circle cx="100" cy="100" r="88" fill="none" stroke="#ffffff" stroke-width="1.5"/>
+          <circle cx="100" cy="100" r="55" fill="#ffffff" />
+          
+          <path id="curve-top" d="M 30,100 A 70,70 0 0,1 170,100" fill="transparent" />
+          <text fill="#ffffff" font-family="'Outfit', sans-serif" font-weight="700" font-size="18" letter-spacing="4">
+            <textPath href="#curve-top" startOffset="50%" text-anchor="middle">INFINITE</textPath>
+          </text>
+          <path id="curve-bottom" d="M 30,100 A 70,70 0 0,0 170,100" fill="transparent" />
+          <text fill="#ffffff" font-family="'Outfit', sans-serif" font-weight="700" font-size="18" letter-spacing="4" dominant-baseline="hanging" dy="2">
+            <textPath href="#curve-bottom" startOffset="50%" text-anchor="middle">SERVICES</textPath>
+          </text>
+
+          <path d="M55,100 c0,-20 22.5,-20 45,0 c22.5,20 45,20 45,0 c0,-20 -22.5,-20 -45,0 c-22.5,20 -45,20 -45,0 z" fill="none" stroke="#000000" stroke-width="14" stroke-linecap="round"/>
+          <circle cx="100" cy="100" r="3" fill="#ffffff"/>
+
+          <g transform="translate(42, 60) scale(0.7) translate(-12, -12)"><rect x="4" y="4" width="16" height="16" rx="2" ry="2" fill="none" stroke="#ffffff" stroke-width="2"/><rect x="9" y="9" width="6" height="6" fill="none" stroke="#ffffff" stroke-width="2"/><line x1="9" y1="1" x2="9" y2="4" stroke="#ffffff" stroke-width="2"/><line x1="15" y1="1" x2="15" y2="4" stroke="#ffffff" stroke-width="2"/><line x1="9" y1="20" x2="9" y2="23" stroke="#ffffff" stroke-width="2"/><line x1="15" y1="20" x2="15" y2="23" stroke="#ffffff" stroke-width="2"/><line x1="20" y1="9" x2="23" y2="9" stroke="#ffffff" stroke-width="2"/><line x1="20" y1="14" x2="23" y2="14" stroke="#ffffff" stroke-width="2"/><line x1="1" y1="9" x2="4" y2="9" stroke="#ffffff" stroke-width="2"/><line x1="1" y1="14" x2="4" y2="14" stroke="#ffffff" stroke-width="2"/></g>
+          <g transform="translate(158, 60) scale(0.7) translate(-12, -12)"><rect x="2" y="3" width="20" height="14" rx="2" ry="2" fill="none" stroke="#ffffff" stroke-width="2"/><polyline points="16 8 18 10 16 12" fill="none" stroke="#ffffff" stroke-width="2"/><polyline points="8 8 6 10 8 12" fill="none" stroke="#ffffff" stroke-width="2"/><line x1="13" y1="7" x2="11" y2="13" stroke="#ffffff" stroke-width="2"/><line x1="8" y1="21" x2="16" y2="21" stroke="#ffffff" stroke-width="2"/><line x1="12" y1="17" x2="12" y2="21" stroke="#ffffff" stroke-width="2"/></g>
+          <g transform="translate(25, 100) scale(0.7) translate(-12, -12)"><rect x="2" y="2" width="20" height="20" rx="2" ry="2" fill="none" stroke="#ffffff" stroke-width="2"/><circle cx="12" cy="12" r="3" fill="none" stroke="#ffffff" stroke-width="2"/><path d="M2 12 h4 M18 12 h4 M12 2 v4 M12 18 v4 M6 6 l2 2 M18 18 l-2 -2" fill="none" stroke="#ffffff" stroke-width="2"/></g>
+          <g transform="translate(175, 100) scale(0.7) translate(-12, -12)"><rect x="3" y="3" width="18" height="18" rx="2" ry="2" fill="none" stroke="#ffffff" stroke-width="2"/><path d="M7 3 v18 M17 3 v18" fill="none" stroke="#ffffff" stroke-width="2"/><path d="M7 9 h10" fill="none" stroke="#ffffff" stroke-width="2"/><rect x="10" y="9" width="4" height="4" fill="#ffffff" /></g>
+          <g transform="translate(42, 140) scale(0.7) translate(-12, -12)"><path d="M9 21c-3-2-4-5-4-8a7 7 0 1 1 14 0c0 3-1 6-4 8" fill="none" stroke="#ffffff" stroke-width="2"/><circle cx="12" cy="11" r="3" fill="none" stroke="#ffffff" stroke-width="2"/><path d="M12 8v-2 M12 16v-2 M9 11H7 M17 11h-2" fill="none" stroke="#ffffff" stroke-width="2"/></g>
+          <g transform="translate(158, 140) scale(0.7) translate(-12, -12)"><path d="M12 22a10 10 0 1 0-10-10" fill="none" stroke="#ffffff" stroke-width="2"/><path d="M2 12h5l-2.5 3z" fill="#ffffff"/><path d="M12 2l-2.5 3 2.5 3z" fill="#ffffff"/></g>
+        </svg>
+      </a>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="#home" id="nav-home">Home</a></li>
+        <li><a href="#home-shop" id="nav-shop-tab">Shop</a></li>
+        <li><a href="#services" id="nav-services">Services</a></li>
+
+      </ul>
+      <!-- Auth buttons / logged-in state (managed by JS) -->
+      <div class="nav-auth-btns" id="nav-auth-area">
+        <button class="nav-signin-btn" id="nav-signin-btn">Sign In</button>
+        <button class="nav-signup-btn" id="nav-signup-btn">Sign Up</button>
+      </div>
+      <button class="hamburger" id="hamburger-btn" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section id="home" class="hero">
+    <div class="hero-bg-orbs">
+      <div class="orb orb-blue"></div>
+      <div class="orb orb-purple"></div>
+      <div class="orb orb-orange"></div>
+    </div>
+    <div class="hero-content">
+      <p class="hero-pre" id="hero-tagline">✦ Three Core Pillars ✦</p>
+      <h1 class="hero-title" id="hero-main-title">
+        <span class="title-line">INFINITE</span>
+        <span class="title-line gradient-text">SERVICES</span>
+      </h1>
+      <p class="hero-sub" id="hero-subtitle">Powering Technology</p>
+      <div class="hero-stones" id="hero-cores-row">
+        <div class="mini-stone blue" id="hero-core-hardware">
+          <div class="stone-glow">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><rect x="9" y="9" width="6" height="6"></rect>
+              <line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line>
+              <line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line>
+              <line x1="20" y1="9" x2="23" y2="9"></line><line x1="20" y1="14" x2="23" y2="14"></line>
+              <line x1="1" y1="9" x2="4" y2="9"></line><line x1="1" y1="14" x2="4" y2="14"></line>
+            </svg>
+          </div>
+          <span>Hardware</span>
+        </div>
+        <div class="mini-stone purple" id="hero-core-digital">
+          <div class="stone-glow">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line>
+              <polyline points="16 8 18 10 16 12"></polyline><polyline points="8 8 6 10 8 12"></polyline><line x1="13" y1="7" x2="11" y2="13"></line>
+            </svg>
+          </div>
+          <span>Digital</span>
+        </div>
+        <div class="mini-stone orange" id="hero-core-innovation">
+          <div class="stone-glow">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+              <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line>
+            </svg>
+          </div>
+          <span>Innovation</span>
+        </div>
+      </div>
+      <p class="hero-motto" id="hero-motto-text">THREE PILLARS &nbsp;·&nbsp; INFINITE POSSIBILITIES</p>
+      <div class="hero-actions" id="hero-actions">
+        <a href="#services" class="btn-primary" id="hero-explore-btn">Explore Services</a>
+        <button class="btn-outline" id="hero-shop-btn">
+          <span>⚡</span> Shop Components
+        </button>
+      </div>
+
+    </div>
+    <div class="hero-scroll-indicator" id="hero-scroll">
+      <div class="scroll-dot"></div>
+      <span>Scroll to discover</span>
+    </div>
+  </section>
+
+  <!-- HOME SHOP PREVIEW SECTION -->
+  <section id="home-shop" class="home-shop-preview" style="display:none">
+    <div class="section-header">
+      <span class="section-label">Electrical Components</span>
+      <h2 class="section-title">⚡ Our <span class="gradient-text">Shop</span></h2>
+      <p class="section-desc">Browse our curated catalog of quality electrical components at unbeatable prices.</p>
+    </div>
+    <div class="shop-preview-grid" id="home-shop-grid">
+      <!-- Filled by JS -->
+    </div>
+    <div class="shop-preview-cta">
+      <p style="color:var(--text-dim);margin-bottom:1rem;">Sign in to browse the full catalog and place orders.</p>
+      <button class="btn-primary" id="shop-preview-signin-btn" style="font-size:0.85rem;padding:0.8rem 2rem;">Sign In to Shop →</button>
+    </div>
+  </section>
+
+  <!-- STATS BAND -->
+  <section class="stats-band" id="stats">
+    <div class="stats-inner">
+      <div class="stat-item" id="stat-projects">
+        <span class="stat-num" data-target="200">0</span><span class="stat-plus">+</span>
+        <p>Projects Done</p>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item" id="stat-clients">
+        <span class="stat-num" data-target="150">0</span><span class="stat-plus">+</span>
+        <p>Happy Clients</p>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item" id="stat-innovations">
+        <span class="stat-num" data-target="50">0</span><span class="stat-plus">+</span>
+        <p>Innovations</p>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item" id="stat-experience">
+        <span class="stat-num" data-target="5">0</span><span class="stat-plus">+</span>
+        <p>Years Experience</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CORE DIVISIONS SERVICES -->
+  <section id="services" class="services-section">
+    <div class="section-header">
+      <span class="section-label">What We Offer</span>
+      <h2 class="section-title">Our <span class="gradient-text">Core</span> Divisions</h2>
+      <p class="section-desc">Each division brings a unique edge, bringing your ideas to life.</p>
+    </div>
+
+    <div class="stones-grid" id="cores-grid">
+      <!-- HARDWARE CORE – Electronics -->
+      <div class="stone-card space-card reveal" id="core-electronics">
+        <div class="stone-card-bg"></div>
+        <div class="stone-orb-wrap">
+          <div class="stone-orb stone-orb-blue">
+            <div class="orb-inner">
+              <div class="orb-ring r1"></div>
+              <div class="orb-ring r2"></div>
+              <div class="orb-ring r3"></div>
+              <div class="orb-core">
+                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
+                  <rect x="9" y="9" width="6" height="6"></rect>
+                  <line x1="9" y1="1" x2="9" y2="4"></line>
+                  <line x1="15" y1="1" x2="15" y2="4"></line>
+                  <line x1="9" y1="20" x2="9" y2="23"></line>
+                  <line x1="15" y1="20" x2="15" y2="23"></line>
+                  <line x1="20" y1="9" x2="23" y2="9"></line>
+                  <line x1="20" y1="14" x2="23" y2="14"></line>
+                  <line x1="1" y1="9" x2="4" y2="9"></line>
+                  <line x1="1" y1="14" x2="4" y2="14"></line>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="stone-badge blue-badge">HARDWARE CORE</div>
+        <h3 class="stone-title">Electronics Services</h3>
+        <p class="stone-desc">From component-level repairs to complete project builds — we make electronics simple, affordable, and powerful.</p>
+        <ul class="stone-list" id="elec-list">
+          <li id="elec-1"><span class="check">✓</span> Soldering &amp; De-soldering</li>
+          <li id="elec-2"><span class="check">✓</span> Inexpensive Components</li>
+          <li id="elec-3"><span class="check">✓</span> Electronic Repair Services</li>
+          <li id="elec-4"><span class="check">✓</span> Simple Electronic Projects</li>
+          <li id="elec-5"><span class="check">✓</span> Custom Circuit Builds</li>
+        </ul>
+        <div class="stone-footer">
+          <span class="stone-motto-tag">BUILD · REPAIR · INNOVATE</span>
+        </div>
+        <a href="https://wa.me/918438193373" class="stone-btn blue-btn">Enquire Now →</a>
+      </div>
+
+      <!-- DIGITAL CORE – Web Dev -->
+      <div class="stone-card power-card reveal featured-card" id="core-webdev">
+        <div class="stone-card-bg"></div>
+        <div class="featured-badge" id="web-featured-badge">Most Popular</div>
+        <div class="stone-orb-wrap">
+          <div class="stone-orb stone-orb-purple">
+            <div class="orb-inner">
+              <div class="orb-ring r1"></div>
+              <div class="orb-ring r2"></div>
+              <div class="orb-ring r3"></div>
+              <div class="orb-core">
+                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                  <line x1="8" y1="21" x2="16" y2="21"></line>
+                  <line x1="12" y1="17" x2="12" y2="21"></line>
+                  <polyline points="16 8 18 10 16 12"></polyline>
+                  <polyline points="8 8 6 10 8 12"></polyline>
+                  <line x1="13" y1="7" x2="11" y2="13"></line>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="stone-badge purple-badge">DIGITAL CORE</div>
+        <h3 class="stone-title">Web Development</h3>
+        <p class="stone-desc">Bring your digital vision to life — from simple pages to full-stack solutions, we code, design, and deploy.</p>
+        <ul class="stone-list" id="web-list">
+          <li id="web-1"><span class="check">✓</span> Hardware + Web Integration</li>
+          <li id="web-2"><span class="check">✓</span> Simple &amp; Clean Web Pages</li>
+          <li id="web-3"><span class="check">✓</span> Mini Project Websites</li>
+          <li id="web-4"><span class="check">✓</span> Share Ideas → Get Your Site</li>
+          <li id="web-5"><span class="check">✓</span> Code · Design · Deploy</li>
+        </ul>
+        <div class="stone-footer">
+          <span class="stone-motto-tag">CODE · DESIGN · DEPLOY</span>
+        </div>
+        <a href="https://wa.me/918438193373" class="stone-btn purple-btn">Enquire Now →</a>
+      </div>
+
+      <!-- INNOVATION CORE – Scrap Innovator -->
+      <div class="stone-card soul-card reveal" id="core-scrap">
+        <div class="stone-card-bg"></div>
+        <div class="stone-orb-wrap">
+          <div class="stone-orb stone-orb-orange">
+            <div class="orb-inner">
+              <div class="orb-ring r1"></div>
+              <div class="orb-ring r2"></div>
+              <div class="orb-ring r3"></div>
+              <div class="orb-core">
+                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                  <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                  <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                  <path d="M16 12l-4-4-4 4"></path>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="stone-badge orange-badge">INNOVATION CORE</div>
+        <h3 class="stone-title">Scrap Innovator</h3>
+        <p class="stone-desc">We turn yesterday's waste into tomorrow's wonders — smart robots, creative lamps, and gadgets from scrap.</p>
+        <ul class="stone-list" id="scrap-list">
+          <li id="scrap-1"><span class="check">✓</span> Scrap → Smart Creations</li>
+          <li id="scrap-2"><span class="check">✓</span> Reuse · Recycle · Reinvent</li>
+          <li id="scrap-3"><span class="check">✓</span> Creative Lamps &amp; Gadgets</li>
+          <li id="scrap-4"><span class="check">✓</span> Smart Robots &amp; Projects</li>
+          <li id="scrap-5"><span class="check">✓</span> Giving Old Things New Life</li>
+        </ul>
+        <div class="stone-footer">
+          <span class="stone-motto-tag">REUSE · REINVENT · RENEW</span>
+        </div>
+        <a href="https://wa.me/918438193373" class="stone-btn orange-btn">Enquire Now →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- SHOWCASE / TRANSFORMATION -->
+  <section id="showcase" class="showcase-section">
+    <div class="section-header">
+      <span class="section-label">Our Magic</span>
+      <h2 class="section-title">From <span class="gradient-text-orange">Scrap</span> to <span class="gradient-text">Smart</span></h2>
+      <p class="section-desc">Watch the transformation — ordinary waste becomes extraordinary innovation.</p>
+    </div>
+    <div class="slider-container" id="slider-container">
+      <div class="slider-side slider-before" id="slider-before">
+        <div class="slider-content">
+          <div class="slider-bg-grid grid-red"></div>
+          <div class="slider-details">
+            <span class="badge badge-red">🗑️ Disorganized Scrap</span>
+            <h3>Raw Components</h3>
+            <p>Discarded circuitry, tangled copper, and old motors with no power or control.</p>
+            <div class="scrap-visual">
+              <div class="scrap-part scrap-pcb"></div>
+              <div class="scrap-part scrap-gear"></div>
+              <div class="scrap-part scrap-wire"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="slider-side slider-after" id="slider-after">
+        <div class="slider-content">
+          <div class="slider-bg-grid grid-green"></div>
+          <div class="slider-details">
+            <span class="badge badge-green">🤖 Active Synergy</span>
+            <h3>Intelligent System</h3>
+            <p>Clean schematics, integrated sensors, and automated code bringing waste to life.</p>
+            <div class="smart-visual">
+              <div class="smart-node node-1"></div>
+              <div class="smart-node node-2"></div>
+              <div class="smart-node node-3"></div>
+              <svg class="schematic-lines" viewBox="0 0 100 100">
+                <path d="M 10 50 L 35 50 L 50 20 L 65 80 L 80 50 L 95 50" fill="none" stroke="rgba(0,255,180,0.6)" stroke-width="1.5" stroke-dasharray="3,3" />
+                <circle cx="50" cy="20" r="3" fill="#00ffb4" />
+                <circle cx="65" cy="80" r="3" fill="#00ffb4" />
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="slider-handle" id="slider-handle">
+        <div class="handle-line"></div>
+        <div class="handle-button">
+          <span class="arrow-l">←</span>
+          <span class="arrow-r">→</span>
+        </div>
+        <div class="handle-line"></div>
+      </div>
+    </div>
+
+    <!-- Project Gallery -->
+    <div class="project-gallery-title">
+      <span class="section-label">Completed Relics</span>
+      <h3 class="section-sub-title">Synthesized Prototypes</h3>
+    </div>
+    <div class="project-grid">
+      <div class="project-card reveal" data-project="weather-dashboard">
+        <div class="project-image-placeholder prj-web">
+          <div class="cyber-grid"></div>
+          <div class="project-icon-svg">🌐</div>
+        </div>
+        <div class="project-body">
+          <span class="project-cat text-purple">Web Development</span>
+          <h4>Cosmic Weather HUD</h4>
+          <p>Real-time data visualization dashboard tracking weather anomalies with glassmorphic widgets.</p>
+          <button class="project-btn open-modal-btn" data-project="weather-dashboard">View Tech Specs →</button>
+        </div>
+      </div>
+
+      <div class="project-card reveal" data-project="scrap-bot">
+        <div class="project-image-placeholder prj-scrap">
+          <div class="cyber-grid"></div>
+          <div class="project-icon-svg">🤖</div>
+        </div>
+        <div class="project-body">
+          <span class="project-cat text-orange">Scrap Innovation</span>
+          <h4>Obstacle Scrap-Bot v1</h4>
+          <p>An autonomous robot constructed using a plastic bottle chassis, scrap motors, and custom code.</p>
+          <button class="project-btn open-modal-btn" data-project="scrap-bot">View Tech Specs →</button>
+        </div>
+      </div>
+
+      <div class="project-card reveal" data-project="smart-lamp">
+        <div class="project-image-placeholder prj-electronics">
+          <div class="cyber-grid"></div>
+          <div class="project-icon-svg">💡</div>
+        </div>
+        <div class="project-body">
+          <span class="project-cat text-blue">Electronics Services</span>
+          <h4>Steampunk Smart Lamp</h4>
+          <p>Upcycled brass gears combined with addressable RGB LEDs controlled via Bluetooth app.</p>
+          <button class="project-btn open-modal-btn" data-project="smart-lamp">View Tech Specs →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Process Steps -->
+    <div class="process-steps" id="process-steps">
+      <div class="process-step reveal" id="step-1">
+        <div class="step-num blue-num">01</div>
+        <div class="step-icon">💡</div>
+        <h4>Share Your Idea</h4>
+        <p>Tell us what you need — no technical knowledge required.</p>
+      </div>
+      <div class="process-line"></div>
+      <div class="process-step reveal" id="step-2">
+        <div class="step-num purple-num">02</div>
+        <div class="step-icon">🔧</div>
+        <h4>We Design &amp; Build</h4>
+        <p>Our experts craft the perfect solution for your project.</p>
+      </div>
+      <div class="process-line"></div>
+      <div class="process-step reveal" id="step-3">
+        <div class="step-num orange-num">03</div>
+        <div class="step-icon">🚀</div>
+        <h4>You Receive &amp; Wow</h4>
+        <p>Get your ready-made innovation and impress everyone.</p>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- WHY US -->
+  <section class="why-section" id="why-us">
+    <div class="section-header">
+      <span class="section-label">Why Choose Us</span>
+      <h2 class="section-title">The <span class="gradient-text">Infinite</span> Advantage</h2>
+    </div>
+    <div class="why-grid">
+      <div class="why-card reveal" id="why-affordable">
+        <div class="why-icon">💰</div>
+        <h4>Affordable Pricing</h4>
+        <p>Premium quality at prices that won't break the bank. We believe innovation should be accessible to everyone.</p>
+      </div>
+      <div class="why-card reveal" id="why-fast">
+        <div class="why-icon">⚡</div>
+        <h4>Fast Turnaround</h4>
+        <p>Quick delivery without compromising quality. Your time is valuable and we respect that.</p>
+      </div>
+      <div class="why-card reveal" id="why-creative">
+        <div class="why-icon">🎨</div>
+        <h4>Creative Solutions</h4>
+        <p>Unique ideas tailored to your exact needs. We don't do cookie-cutter — every project is one-of-a-kind.</p>
+      </div>
+      <div class="why-card reveal" id="why-support">
+        <div class="why-icon">🤝</div>
+        <h4>Dedicated Support</h4>
+        <p>We're with you from concept to completion and beyond. Your satisfaction is our mission.</p>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- FOOTER -->
+  <footer class="site-footer" id="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div class="footer-logo">
+          <span class="logo-symbol">∞</span>
+          <div>
+            <span class="logo-main">INFINITE</span>
+            <span class="logo-sub">SERVICES</span>
+          </div>
+        </div>
+        <p>Powering Technology · Building Dreams<br/>Three Stones. Three Powers. Infinite Possibilities.</p>
+      </div>
+      <div class="footer-links-wrap">
+        <div class="footer-col">
+          <h5>Services</h5>
+          <ul>
+            <li><a href="#stone-electronics">Electronics</a></li>
+            <li><a href="#stone-webdev">Web Development</a></li>
+            <li><a href="#stone-scrap">Scrap Innovation</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h5>Company</h5>
+          <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#showcase">Showcase</a></li>
+            <li><a href="#why-us">Why Us</a></li>
+
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h5>Contact</h5>
+          <ul>
+            <li><a href="tel:8438193373">📞 8438193373</a></li>
+            <li><a href="mailto:info@infiniteservices.in">✉️ Email Us</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 Infinite Services. All rights reserved. &nbsp;|&nbsp; Powered by Innovation ∞</p>
+    </div>
+  </footer>
+
+  <!-- Back to Top -->
+  <button class="back-to-top" id="back-to-top" aria-label="Back to top">↑</button>
+
+  <!-- TECH MODAL -->
+  <div class="modal-overlay" id="tech-modal">
+    <div class="modal-container">
+      <button class="modal-close" id="modal-close-btn" aria-label="Close modal">&times;</button>
+      <div class="modal-header">
+        <span class="modal-category" id="modal-project-cat">Web Development</span>
+        <h3 class="modal-title" id="modal-project-title">Cosmic Weather HUD</h3>
+      </div>
+      <div class="modal-body">
+        <div class="modal-split">
+          <div class="modal-visual-panel">
+            <div class="modal-schematic-wrap">
+              <div class="schematic-grid"></div>
+              <div class="schematic-content" id="modal-schematic-content">
+                <!-- SVG / schematic loaded via JS -->
+              </div>
+            </div>
+          </div>
+          <div class="modal-info-panel">
+            <h4>Description</h4>
+            <p id="modal-project-desc">Real-time data visualization dashboard tracking weather anomalies with glassmorphic widgets.</p>
+            
+            <h4>Technical Specs</h4>
+            <ul class="modal-specs-list" id="modal-project-specs">
+              <li><strong>Core Component:</strong> React, Chart.js</li>
+              <li><strong>Power Level:</strong> Low Draw</li>
+              <li><strong>Integration:</strong> OpenWeather API</li>
+            </ul>
+
+            <h4>Synergized Stones</h4>
+            <div class="modal-stones-row" id="modal-project-stones">
+              <span class="mini-stone-badge blue-badge">SPACE</span>
+              <span class="mini-stone-badge purple-badge">POWER</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== SIGN IN MODAL ===================== -->
+  <div class="auth-modal-overlay" id="signin-modal" role="dialog" aria-modal="true" aria-label="Sign In">
+    <div class="auth-modal auth-modal-bg">
+      <div class="auth-modal-bg-img" style="background-image:url('auth_bg.png')"></div>
+      <div class="auth-modal-inner">
+        <button class="auth-modal-close" id="signin-modal-close" aria-label="Close">✕</button>
+        <div class="auth-modal-logo">
+          <div class="logo-symbol">∞</div>
+          <div class="logo-text"><span class="logo-main">INFINITE</span><span class="logo-sub">SERVICES</span></div>
+        </div>
+        <h2>Welcome Back</h2>
+        <p class="auth-modal-subtitle">Choose your role to sign in</p>
+
+        <!-- Role Tabs -->
+        <div class="auth-role-tabs" id="signin-role-tabs">
+          <button class="auth-role-tab active" id="signin-tab-user" data-role="user">
+            <span class="tab-icon">👤</span> User
+          </button>
+          <button class="auth-role-tab" id="signin-tab-admin" data-role="admin">
+            <span class="tab-icon">🛡️</span> Admin
+          </button>
+        </div>
+
+        <div class="auth-error-msg" id="signin-error"></div>
+
+        <div class="auth-field">
+          <label for="signin-email">Email Address</label>
+          <input type="email" id="signin-email" placeholder="your@email.com" autocomplete="email" />
+          <span class="auth-field-err" id="signin-email-err"></span>
+        </div>
+        <div class="auth-field">
+          <label for="signin-password">Password</label>
+          <input type="password" id="signin-password" placeholder="Your password" autocomplete="current-password" />
+          <span class="auth-field-err" id="signin-pw-err"></span>
+        </div>
+
+        <!-- Admin hint (hidden by default) -->
+        <p class="auth-admin-hint" id="signin-admin-hint">🛡️ Admin: owner@infinite.in / owner123</p>
+
+        <button class="auth-submit-btn" id="signin-submit-btn">Sign In →</button>
+        <p class="auth-switch-text">Don't have an account? <a id="switch-to-signup">Sign Up</a></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== SIGN UP MODAL ===================== -->
+  <div class="auth-modal-overlay" id="signup-modal" role="dialog" aria-modal="true" aria-label="Sign Up">
+    <div class="auth-modal auth-modal-bg">
+      <div class="auth-modal-bg-img" style="background-image:url('auth_bg.png')"></div>
+      <div class="auth-modal-inner">
+        <button class="auth-modal-close" id="signup-modal-close" aria-label="Close">✕</button>
+        <div class="auth-modal-logo">
+          <div class="logo-symbol">∞</div>
+          <div class="logo-text"><span class="logo-main">INFINITE</span><span class="logo-sub">SERVICES</span></div>
+        </div>
+        <h2>Create Account</h2>
+        <p class="auth-modal-subtitle">Choose your role to get started</p>
+
+        <!-- Role Tabs -->
+        <div class="auth-role-tabs" id="signup-role-tabs">
+          <button class="auth-role-tab active" id="signup-tab-user" data-role="customer">
+            <span class="tab-icon">👤</span> User
+          </button>
+          <button class="auth-role-tab" id="signup-tab-admin" data-role="owner">
+            <span class="tab-icon">🛡️</span> Admin
+          </button>
+        </div>
+
+        <div class="auth-error-msg" id="signup-error"></div>
+
+        <div class="auth-field">
+          <label for="signup-name">Full Name</label>
+          <input type="text" id="signup-name" placeholder="e.g. Rahul Kumar" autocomplete="name" />
+          <span class="auth-field-err" id="signup-name-err"></span>
+        </div>
+        <div class="auth-field">
+          <label for="signup-email">Email Address</label>
+          <input type="email" id="signup-email" placeholder="your@email.com" autocomplete="email" />
+          <span class="auth-field-err" id="signup-email-err"></span>
+        </div>
+        <div class="auth-field">
+          <label for="signup-password">Password</label>
+          <input type="password" id="signup-password" placeholder="Min. 6 characters" autocomplete="new-password" />
+          <span class="auth-field-err" id="signup-pw-err"></span>
+        </div>
+
+        <!-- Admin key field (hidden by default) -->
+        <div class="auth-field" id="signup-admin-key-field" style="display:none">
+          <label for="signup-admin-key">Admin Secret Key</label>
+          <input type="password" id="signup-admin-key" placeholder="Enter admin secret key" />
+          <span class="auth-field-err" id="signup-admin-key-err"></span>
+        </div>
+
+        <button class="auth-submit-btn" id="signup-submit-btn">Create Account →</button>
+        <p class="auth-switch-text">Already have an account? <a id="switch-to-signin">Sign In</a></p>
+      </div>
+    </div>
+  </div>
+
+  <script src="auth.js"></script>
+  <script src="shop.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>

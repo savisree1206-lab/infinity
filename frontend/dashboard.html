@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard – Infinite Services</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@400;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="portal.css" />
+
+  <style>
+    /* Dashboard Specific Styles */
+    .dashboard-container {
+      max-width: 1200px;
+      margin: 120px auto 50px auto;
+      padding: 0 5%;
+      text-align: center;
+    }
+    .dash-welcome {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .dash-subtitle {
+      color: var(--text-muted);
+      margin-bottom: 50px;
+      font-size: 1.1rem;
+    }
+    
+    .service-selection-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+    }
+    
+    .service-card {
+      background: rgba(10, 10, 10, 0.4);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      padding: 40px 30px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .service-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 40px rgba(197, 160, 89, 0.1);
+      border-color: rgba(197, 160, 89, 0.4);
+    }
+    
+    .service-logo-container {
+      height: 150px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    
+    .service-logo-container svg {
+      max-height: 100%;
+      width: auto;
+    }
+    
+    .service-card h3 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+      color: #ffffff;
+    }
+    
+    .service-card p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+    
+    /* Overlay for Under Construction */
+    .construction-overlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(10, 10, 10, 0.95);
+      backdrop-filter: blur(5px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    
+    .service-card.show-construction .construction-overlay {
+      opacity: 1;
+      pointer-events: all;
+    }
+    
+    .construction-icon {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+    }
+    
+    .construction-text {
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      font-family: 'Outfit', sans-serif;
+    }
+  </style>
+</head>
+<body class="theme-dark">
+  <div class="site-bg"></div>
+
+  <!-- NAVIGATION -->
+  <nav id="navbar">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo" style="display:flex; align-items:center;">
+        <svg width="60" height="60" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="100" cy="100" r="95" fill="#000000" stroke="#d4af37" stroke-width="6"/>
+          <circle cx="100" cy="100" r="88" fill="none" stroke="#ffffff" stroke-width="1.5"/>
+          <circle cx="100" cy="100" r="55" fill="#ffffff" />
+          <path id="curve-top" d="M 30,100 A 70,70 0 0,1 170,100" fill="transparent" />
+          <text fill="#ffffff" font-family="'Outfit', sans-serif" font-weight="700" font-size="18" letter-spacing="4">
+            <textPath href="#curve-top" startOffset="50%" text-anchor="middle">INFINITE</textPath>
+          </text>
+          <path id="curve-bottom" d="M 30,100 A 70,70 0 0,0 170,100" fill="transparent" />
+          <text fill="#ffffff" font-family="'Outfit', sans-serif" font-weight="700" font-size="18" letter-spacing="4" dominant-baseline="hanging" dy="2">
+            <textPath href="#curve-bottom" startOffset="50%" text-anchor="middle">SERVICES</textPath>
+          </text>
+          <path d="M55,100 c0,-20 22.5,-20 45,0 c22.5,20 45,20 45,0 c0,-20 -22.5,-20 -45,0 c-22.5,20 -45,20 -45,0 z" fill="none" stroke="#000000" stroke-width="14" stroke-linecap="round"/>
+          <circle cx="100" cy="100" r="3" fill="#ffffff"/>
+        </svg>
+      </a>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+      </ul>
+      <div class="nav-auth-btns">
+        <span id="user-greeting" style="margin-right:20px; font-weight:600; color:var(--text-main);"></span>
+        <button class="nav-signin-btn" id="nav-signout-btn">Sign Out</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- DASHBOARD CONTENT -->
+  <main class="dashboard-container">
+    <h1 class="dash-welcome">Welcome to your Dashboard, <span id="dash-username" class="gradient-text"></span></h1>
+    <p class="dash-subtitle">Please select a service division to proceed into your dedicated portal.</p>
+    
+    <div class="service-selection-grid">
+      
+      <!-- Electronics Service -->
+      <div class="service-card" onclick="window.location.href='electronics_dashboard.html'">
+        <div class="service-logo-container">
+          <!-- Electronics SVG (Hardware) -->
+          <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="100" cy="100" r="95" fill="#000000" stroke="#d4af37" stroke-width="6"/>
+            <circle cx="100" cy="100" r="88" fill="none" stroke="#ffffff" stroke-width="1.5"/>
+            <circle cx="100" cy="100" r="55" fill="#ffffff" />
+            
+            <path id="ct-elec" d="M 30,100 A 70,70 0 0,1 170,100" fill="transparent" />
+            <text fill="#ffffff" font-family="'Outfit', sans-serif" font-weight="700" font-size="20" letter-spacing="4">
+              <textPath href="#ct-elec" startOffset="50%" text-anchor="middle">ELECTRONICS</textPath>
+            </text>
+            <path id="cb-elec" d="M 30,100 A 70,70 0 0,0 170,100" fill="transparent" />
+            <text fill="#ffffff" font-family="'Outfit', sans-serif" font-weight="700" font-size="20" letter-spacing="4" dominant-baseline="hanging" dy="2">
+              <textPath href="#cb-elec" startOffset="50%" text-anchor="middle">SERVICE</textPath>
+            </text>
+            
+            <!-- Circuit Icon in center -->
+            <g transform="translate(100,100) scale(2.5) translate(-12,-12)">
+              <rect x="4" y="4" width="16" height="16" rx="2" ry="2" fill="none" stroke="#000000" stroke-width="1.5"/>
+              <rect x="9" y="9" width="6" height="6" fill="#000000"/>
+              <line x1="9" y1="1" x2="9" y2="4" stroke="#000000" stroke-width="1.5"/>
+              <line x1="15" y1="1" x2="15" y2="4" stroke="#000000" stroke-width="1.5"/>
+              <line x1="9" y1="20" x2="9" y2="23" stroke="#000000" stroke-width="1.5"/>
+              <line x1="15" y1="20" x2="15" y2="23" stroke="#000000" stroke-width="1.5"/>
+              <line x1="20" y1="9" x2="23" y2="9" stroke="#000000" stroke-width="1.5"/>
+              <line x1="20" y1="14" x2="23" y2="14" stroke="#000000" stroke-width="1.5"/>
+              <line x1="1" y1="9" x2="4" y2="9" stroke="#000000" stroke-width="1.5"/>
+              <line x1="1" y1="14" x2="4" y2="14" stroke="#000000" stroke-width="1.5"/>
+            </g>
+          </svg>
+        </div>
+        <h3>Electronics Service</h3>
+        <p>Access your IoT projects, PCB designs, hardware blueprints, and component shop history.</p>
+      </div>
+
+      <!-- Web Development Service -->
+      <div class="service-card" onclick="window.location.href='webdev_dashboard.html'">
+        <div class="service-logo-container">
+          <!-- Web Dev SVG -->
+          <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="100" cy="100" r="95" fill="#000000" stroke="#d4af37" stroke-width="6"/>
+            <circle cx="100" cy="100" r="88" fill="none" stroke="#ffffff" stroke-width="1.5"/>
+            <circle cx="100" cy="100" r="55" fill="#ffffff" />
+            
+            <path id="ct-web" d="M 30,100 A 70,70 0 0,1 170,100" fill="transparent" />
+            <text fill="#ffffff" font-family="'Outfit', sans-serif" font-weight="700" font-size="20" letter-spacing="4">
+              <textPath href="#ct-web" startOffset="50%" text-anchor="middle">WEB</textPath>
+            </text>
+            <path id="cb-web" d="M 30,100 A 70,70 0 0,0 170,100" fill="transparent" />
+            <text fill="#ffffff" font-family="'Outfit', sans-serif" font-weight="700" font-size="18" letter-spacing="3" dominant-baseline="hanging" dy="2">
+              <textPath href="#cb-web" startOffset="50%" text-anchor="middle">DEVELOPMENT</textPath>
+            </text>
+            
+            <!-- Code/Monitor Icon in center -->
+            <g transform="translate(100,100) scale(2.2) translate(-12,-12)">
+              <rect x="2" y="3" width="20" height="14" rx="2" ry="2" fill="none" stroke="#000000" stroke-width="1.5"/>
+              <line x1="8" y1="21" x2="16" y2="21" stroke="#000000" stroke-width="1.5"/>
+              <line x1="12" y1="17" x2="12" y2="21" stroke="#000000" stroke-width="1.5"/>
+              <polyline points="16 8 18 10 16 12" fill="none" stroke="#000000" stroke-width="1.5"/>
+              <polyline points="8 8 6 10 8 12" fill="none" stroke="#000000" stroke-width="1.5"/>
+              <line x1="13" y1="7" x2="11" y2="13" stroke="#000000" stroke-width="1.5"/>
+            </g>
+          </svg>
+        </div>
+        <h3>Web Development</h3>
+        <p>Book full-stack projects, browse our live portfolio, and track your development requests.</p>
+      </div>
+
+      <!-- Scrap Innovator Service -->
+      <div class="service-card" onclick="window.location.href='scrap_dashboard.html'">
+        <div class="service-logo-container">
+          <!-- Scrap SVG -->
+          <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="100" cy="100" r="95" fill="#000000" stroke="#d4af37" stroke-width="6"/>
+            <circle cx="100" cy="100" r="88" fill="none" stroke="#ffffff" stroke-width="1.5"/>
+            <circle cx="100" cy="100" r="55" fill="#ffffff" />
+            
+            <path id="ct-scrap" d="M 30,100 A 70,70 0 0,1 170,100" fill="transparent" />
+            <text fill="#ffffff" font-family="'Outfit', sans-serif" font-weight="700" font-size="20" letter-spacing="4">
+              <textPath href="#ct-scrap" startOffset="50%" text-anchor="middle">SCRAP</textPath>
+            </text>
+            <path id="cb-scrap" d="M 30,100 A 70,70 0 0,0 170,100" fill="transparent" />
+            <text fill="#ffffff" font-family="'Outfit', sans-serif" font-weight="700" font-size="20" letter-spacing="4" dominant-baseline="hanging" dy="2">
+              <textPath href="#cb-scrap" startOffset="50%" text-anchor="middle">INNOVATOR</textPath>
+            </text>
+            
+            <!-- Trash Can with Recycle Icon -->
+            <g transform="translate(100,100) scale(1.8) translate(-15,-15)">
+              <!-- Trash Can Body -->
+              <path d="M6,8 L24,8 L22,26 A2,2 0 0,1 20,28 L10,28 A2,2 0 0,1 8,26 Z" fill="none" stroke="#000000" stroke-width="2"/>
+              <!-- Trash Can Lid -->
+              <rect x="4" y="5" width="22" height="3" rx="1" fill="#000000"/>
+              <!-- Trash Can Handle -->
+              <path d="M11,5 L11,3 A1,1 0 0,1 12,2 L18,2 A1,1 0 0,1 19,3 L19,5" fill="none" stroke="#000000" stroke-width="2"/>
+              
+              <!-- Small Recycle Symbol Inside -->
+              <path d="M12,18 L15,18 L13.5,13 Z" fill="#000000"/>
+              <path d="M15,18 L18,18 L16.5,23 Z" fill="#000000"/>
+              <path d="M12,18 L18,18" stroke="#000000" stroke-width="1"/>
+            </g>
+          </svg>
+        </div>
+        <h3>Scrap Innovator</h3>
+        <p>Browse upcycled educational kits, purchase salvage parts, and donate electronic e-waste for credits.</p>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="auth.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Need a simple check. If no user, redirect to index
+      const user = AuthManager.currentUser();
+      if (!user) {
+        window.location.href = 'index.html';
+        return;
+      }
+      
+      document.getElementById('dash-username').textContent = user.name;
+      document.getElementById('user-greeting').textContent = 'Hi, ' + user.name;
+      
+      document.getElementById('nav-signout-btn').addEventListener('click', () => {
+        AuthManager.signOut();
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shop – Infinite Services</title>
+  <meta name="description" content="Buy electrical components online from Infinite Services. Resistors, LEDs, Sensors, Microcontrollers and more." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="portal.css" />
+</head>
+<body class="portal-body">
+  <canvas id="particleCanvas"></canvas>
+
+  <!-- NAVBAR -->
+  <nav id="navbar" class="scrolled portal-nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <div class="logo-symbol">∞</div>
+        <div class="logo-text">
+          <span class="logo-main">INFINITE</span>
+          <span class="logo-sub">SERVICES</span>
+        </div>
+      </a>
+      <div class="portal-nav-center">
+        <span class="portal-badge customer-badge">⚡ Customer Portal</span>
+      </div>
+      <div class="nav-user-area" id="nav-user-area">
+        <div class="cart-trigger" id="cart-trigger-btn" title="View Cart">
+          <span class="cart-icon">🛒</span>
+          <span class="cart-badge" id="cart-badge">0</span>
+        </div>
+        <div class="nav-user-chip" id="nav-user-chip">
+          <div class="user-avatar" id="user-avatar-nav">U</div>
+          <span id="user-name-nav">Customer</span>
+        </div>
+        <button class="nav-signout-btn" id="nav-signout-btn">Sign Out</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN LAYOUT -->
+  <div class="portal-layout" id="portal-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="portal-sidebar" id="portal-sidebar">
+      <nav class="sidebar-nav">
+        <button class="sidebar-item active" data-tab="shop" id="sidebar-shop">
+          <span class="sidebar-icon">🏪</span>
+          <span>Shop</span>
+        </button>
+        <button class="sidebar-item" data-tab="orders" id="sidebar-orders">
+          <span class="sidebar-icon">📦</span>
+          <span>My Orders</span>
+        </button>
+        <button class="sidebar-item" data-tab="profile" id="sidebar-profile">
+          <span class="sidebar-icon">👤</span>
+          <span>Profile</span>
+        </button>
+      </nav>
+      <a href="index.html" class="sidebar-back-btn">← Back to Site</a>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="portal-main" id="portal-main">
+
+      <!-- ======= SHOP TAB ======= -->
+      <section class="portal-tab active" id="tab-shop">
+        <div class="tab-header">
+          <h1 class="tab-title">⚡ Electrical <span class="gradient-text">Components</span></h1>
+          <p class="tab-subtitle">Quality components at affordable prices — delivered to your doorstep.</p>
+        </div>
+
+        <!-- Category Filter -->
+        <div class="category-filter" id="category-filter">
+          <!-- Filled by JS -->
+        </div>
+
+        <!-- Search -->
+        <div class="search-bar-wrap">
+          <input type="search" id="product-search" placeholder="🔍  Search components..." class="product-search" />
+        </div>
+
+        <!-- Product Grid -->
+        <div class="product-grid" id="product-grid">
+          <!-- Filled by JS -->
+        </div>
+      </section>
+
+      <!-- ======= ORDERS TAB ======= -->
+      <section class="portal-tab" id="tab-orders">
+        <div class="tab-header">
+          <h1 class="tab-title">📦 My <span class="gradient-text">Orders</span></h1>
+          <p class="tab-subtitle">Track your orders and their current status.</p>
+        </div>
+        <div class="orders-list" id="orders-list">
+          <!-- Filled by JS -->
+        </div>
+      </section>
+
+      <!-- ======= PROFILE TAB ======= -->
+      <section class="portal-tab" id="tab-profile">
+        <div class="tab-header">
+          <h1 class="tab-title">👤 My <span class="gradient-text">Profile</span></h1>
+        </div>
+        <div class="profile-card" id="profile-card">
+          <div class="profile-avatar-big" id="profile-avatar-big">U</div>
+          <div class="profile-details">
+            <div class="profile-row"><span class="profile-label">Name</span><span id="profile-name">—</span></div>
+            <div class="profile-row"><span class="profile-label">Email</span><span id="profile-email">—</span></div>
+            <div class="profile-row"><span class="profile-label">Role</span><span class="customer-badge-sm">Customer</span></div>
+          </div>
+          <button class="btn-danger" id="profile-signout-btn">Sign Out</button>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- CART SIDEBAR -->
+  <div class="cart-overlay" id="cart-overlay"></div>
+  <aside class="cart-drawer" id="cart-drawer">
+    <div class="cart-drawer-header">
+      <h3>🛒 Your Cart</h3>
+      <button class="cart-close-btn" id="cart-close-btn">✕</button>
+    </div>
+    <div class="cart-items" id="cart-items">
+      <!-- Filled by JS -->
+    </div>
+    <div class="cart-footer">
+      <div class="cart-total-row">
+        <span>Total</span>
+        <span class="cart-total-price" id="cart-total-price">₹0</span>
+      </div>
+      <button class="btn-checkout" id="btn-checkout">Place Order 🚀</button>
+    </div>
+  </aside>
+
+  <!-- ORDER SUCCESS TOAST -->
+  <div class="order-toast hidden" id="order-toast">
+    <span class="toast-icon">✅</span>
+    <div>
+      <strong>Order Placed!</strong>
+      <p id="order-toast-msg">Your order has been submitted successfully.</p>
+    </div>
+  </div>
+
+  <script src="auth.js"></script>
+  <script src="shop.js"></script>
+  <script src="portal.js"></script>
+</body>
+</html>

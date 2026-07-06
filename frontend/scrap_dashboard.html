@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Scrap Innovator – Infinite Services</title>
+  <meta name="description" content="Reduce e-waste and build green prototypes. Submit electronic scrap, buy upcycled kits, and learn from DIY guides." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="portal.css" />
+</head>
+<body class="portal-body">
+  <canvas id="particleCanvas"></canvas>
+
+  <!-- NAVBAR -->
+  <nav id="navbar" class="scrolled portal-nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <div class="logo-symbol">∞</div>
+        <div class="logo-text">
+          <span class="logo-main">INFINITE</span>
+          <span class="logo-sub">SERVICES</span>
+        </div>
+      </a>
+      <div class="portal-nav-center">
+        <span class="portal-badge scrap-badge">♻️ Scrap Innovator</span>
+      </div>
+      <div class="nav-user-area" id="nav-user-area">
+        <div class="nav-credits-chip" title="Your Eco-Credits">
+          <span class="credit-leaf">🍃</span>
+          <span id="user-eco-credits">120</span> <span style="font-size:0.75rem;opacity:0.8;margin-left:2px;">Credits</span>
+        </div>
+        <div class="nav-user-chip" id="nav-user-chip">
+          <div class="user-avatar" id="user-avatar-nav">U</div>
+          <span id="user-name-nav">Customer</span>
+        </div>
+        <button class="nav-signout-btn" id="nav-signout-btn">Sign Out</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN LAYOUT -->
+  <div class="portal-layout" id="portal-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="portal-sidebar" id="portal-sidebar">
+      <nav class="sidebar-nav">
+        <button class="sidebar-item active" data-tab="submit-scrap" id="sidebar-submit-scrap">
+          <span class="sidebar-icon">♻️</span>
+          <span>Submit Scrap</span>
+        </button>
+        <button class="sidebar-item" data-tab="scrap-shop" id="sidebar-scrap-shop">
+          <span class="sidebar-icon">🛠️</span>
+          <span>Scrap Shop</span>
+        </button>
+        <button class="sidebar-item" data-tab="diy-guides" id="sidebar-diy-guides">
+          <span class="sidebar-icon">🧠</span>
+          <span>DIY Guides</span>
+        </button>
+        <button class="sidebar-item" data-tab="my-projects" id="sidebar-my-projects">
+          <span class="sidebar-icon">📋</span>
+          <span>My Projects</span>
+        </button>
+        <button class="sidebar-item" data-tab="impact" id="sidebar-impact">
+          <span class="sidebar-icon">📈</span>
+          <span>Impact Tracker</span>
+        </button>
+      </nav>
+      <a href="dashboard.html" class="sidebar-back-btn">← Back to Dashboard</a>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="portal-main" id="portal-main">
+
+      <!-- ======= SUBMIT SCRAP TAB ======= -->
+      <section class="portal-tab active" id="tab-submit-scrap">
+        <div class="tab-header">
+          <h1 class="tab-title">♻️ Submit <span class="gradient-text text-green-gold">Electronic Scrap</span></h1>
+          <p class="tab-subtitle">Donate or recycle old devices, chargers, components, or batteries to earn Eco-Credits.</p>
+        </div>
+
+        <div class="section-card portal-form-container" style="max-width: 600px;">
+          <form id="scrap-submission-form">
+            <div class="portal-form-group">
+              <label for="scrap-item-name" class="portal-form-label">Scrap Item Name</label>
+              <input type="text" id="scrap-item-name" class="portal-input" placeholder="e.g. Broken laptop battery, old USB cables, power supply" required />
+            </div>
+
+            <div class="wd-form-row">
+              <div class="portal-form-group">
+                <label for="scrap-category" class="portal-form-label">Category</label>
+                <select id="scrap-category" class="portal-select" required>
+                  <option value="">— Select Category —</option>
+                  <option value="Batteries">Batteries / Cells</option>
+                  <option value="Cables / Wires">Cables & Wires</option>
+                  <option value="Motors / Acts">Motors & Actuators</option>
+                  <option value="PCBs / Boards">PCBs & Circuit Boards</option>
+                  <option value="Power Supplies">Power Adaptors / Adapters</option>
+                  <option value="Full Devices">Old/Broken Devices</option>
+                  <option value="Other">Other Scrap</option>
+                </select>
+              </div>
+
+              <div class="portal-form-group">
+                <label for="scrap-condition" class="portal-form-label">Estimated Condition</label>
+                <select id="scrap-condition" class="portal-select" required>
+                  <option value="">— Select Condition —</option>
+                  <option value="Non-Functional">Non-Functional (Recycle Only)</option>
+                  <option value="Semi-Functional">Semi-Functional (Salvageable parts)</option>
+                  <option value="Functional">Functional (Needs refurbishment)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="portal-form-group">
+              <label for="scrap-weight" class="portal-form-label">Approx Weight / Count</label>
+              <input type="text" id="scrap-weight" class="portal-input" placeholder="e.g. 500 grams, 3 items" required />
+            </div>
+
+            <div class="portal-form-group">
+              <label for="scrap-desc" class="portal-form-label">Detailed Description of Items</label>
+              <textarea id="scrap-desc" class="portal-textarea" rows="4" placeholder="Describe the items, defects, ports, chips visible if any..." required></textarea>
+            </div>
+
+            <button type="submit" class="btn-checkout" style="width:100%;">
+              ♻️ Submit Scrap &amp; Estimate Credits
+            </button>
+          </form>
+          <div id="scrap-success-msg" class="success-msg">E-waste submission logged! Our recovery team will verify items and credit your account.</div>
+        </div>
+      </section>
+
+      <!-- ======= SCRAP SHOP TAB ======= -->
+      <section class="portal-tab" id="tab-scrap-shop">
+        <div class="tab-header">
+          <h1 class="tab-title">🛠️ Scrap <span class="gradient-text text-green-gold">Marketplace</span></h1>
+          <p class="tab-subtitle">Purchase upcycled kits and tested salvage components using your Eco-Credits.</p>
+        </div>
+
+        <div class="scrap-category-filters">
+          <button class="scrap-cat-btn active" data-cat="all">All Items</button>
+          <button class="scrap-cat-btn" data-cat="Kit">Upcycled Kits</button>
+          <button class="scrap-cat-btn" data-cat="Salvage">Salvaged Parts</button>
+        </div>
+
+        <div class="product-grid" id="scrap-shop-grid"></div>
+      </section>
+
+      <!-- ======= DIY GUIDES TAB ======= -->
+      <section class="portal-tab" id="tab-diy-guides">
+        <div class="tab-header">
+          <h1 class="tab-title">🧠 Educational <span class="gradient-text text-green-gold">DIY Guides</span></h1>
+          <p class="tab-subtitle">Follow simple instructions to build working models from e-waste components.</p>
+        </div>
+
+        <div class="guides-container">
+          
+          <!-- Featured Video Showcase (Instagram Reel) -->
+          <div class="scrap-featured-showcase">
+            <div class="showcase-content">
+              <span class="guide-level" style="position:static;display:inline-block;margin-bottom:0.8rem;">🔥 Featured Showcase</span>
+              <h2 class="guide-title" style="font-size:1.6rem;margin-bottom:0.5rem;">🔊 Upcycled Bluetooth Speaker</h2>
+              <p style="color:var(--text-dim);font-size:0.92rem;line-height:1.6;margin-bottom:1.2rem;">
+                Witness sustainable innovation in action. This premium Bluetooth speaker was assembled entirely using reclaimed components from salvaged electronic waste (e-waste). Check out the creator video below!
+              </p>
+              <div class="showcase-tags-container" style="display:flex;flex-wrap:wrap;gap:0.4rem;margin-bottom:1rem;">
+                <span class="tech-tag" style="border-color:rgba(0,230,118,0.3);color:#00e676;">#recycletech</span>
+                <span class="tech-tag">#bluetoothspeaker</span>
+                <span class="tech-tag">#diyelectronics</span>
+                <span class="tech-tag">#electronic_designer</span>
+                <span class="tech-tag">#ewastemanagement</span>
+                <span class="tech-tag">#makercommunity</span>
+              </div>
+              <div style="font-size:0.8rem;color:rgba(255,255,255,0.4);display:flex;align-items:center;gap:0.4rem;">
+                <span>📸 Instagram Reel</span> · <span>By @electronic_designer</span>
+              </div>
+            </div>
+            
+            <div class="showcase-video-wrap">
+              <iframe 
+                src="https://www.instagram.com/reel/DSSbT_mE-pw/embed/" 
+                width="360" 
+                height="450" 
+                frameborder="0" 
+                scrolling="no" 
+                allowtransparency="true" 
+                style="border:none;border-radius:16px;display:block;margin:0 auto;max-width:100%;box-shadow:0 12px 36px rgba(0,0,0,0.6);"
+              ></iframe>
+            </div>
+          </div>
+
+          <!-- Guide 1: Solar Tracker -->
+          <div class="guide-card">
+            <div class="guide-banner" style="background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.85)), url('images/scrap/solar_tracker.png');">
+              <span class="guide-level">Intermediate</span>
+              <h2 class="guide-title">Automatic Solar Tracker Model</h2>
+              <p class="guide-subtitle">Build a solar tracker that follows light source using salvaged servo motors and micro controllers.</p>
+            </div>
+            <div class="guide-body">
+              <h4>📋 Required Salvaged Parts:</h4>
+              <ul class="guide-parts-list">
+                <li>🔋 1x Salvaged 9V Battery or cell pack</li>
+                <li>⚙️ 2x Micro Servo Motors</li>
+                <li>📡 4x Light Dependent Resistors (LDRs)</li>
+                <li>🔲 1x Mini solar panel</li>
+              </ul>
+              <h4>🚀 Step-by-Step Overview:</h4>
+              <ol class="guide-steps-list">
+                <li>Construct the pivoting frame using upcycled cardboard or wood strips.</li>
+                <li>Mount one servo at the base for horizontal rotation, and the second on top for vertical pivot.</li>
+                <li>Place LDR sensors at the 4 corners of the solar panel, separated by small cardboard walls.</li>
+                <li>Connect all components to your microcontroller board and upload the tracker script.</li>
+              </ol>
+            </div>
+          </div>
+
+          <!-- Guide 2: Wind Turbine -->
+          <div class="guide-card">
+            <div class="guide-banner" style="background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.85)), url('https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?w=800&q=80&fit=crop');">
+              <span class="guide-level">Beginner</span>
+              <h2 class="guide-title">Upcycled Mini Wind Turbine</h2>
+              <p class="guide-subtitle">Generate electricity from simple air flow using an old DC motor and plastic bottles.</p>
+            </div>
+            <div class="guide-body">
+              <h4>📋 Required Salvaged Parts:</h4>
+              <ul class="guide-parts-list">
+                <li>⚙️ 1x Salvaged high-RPM DC motor (from old CD drive or toy)</li>
+                <li>🔴 1x LED Light (Red/Green)</li>
+                <li>🥤 Plastic bottle (for cutting blades)</li>
+                <li>📏 Cardboard or plastic tube for support stand</li>
+              </ul>
+              <h4>🚀 Step-by-Step Overview:</h4>
+              <ol class="guide-steps-list">
+                <li>Carefully cut fan blades from the curved surface of a plastic drink bottle.</li>
+                <li>Attach the blade center hub securely onto the shaft of your salvage DC motor.</li>
+                <li>Solder the motor terminal wires directly to the LED legs (check polarity).</li>
+                <li>Blow air onto the blades to spin the motor. Watch the LED glow green!</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======= MY PROJECTS TAB ======= -->
+      <section class="portal-tab" id="tab-my-projects">
+        <div class="tab-header">
+          <h1 class="tab-title">📋 My Upcycled <span class="gradient-text text-green-gold">Projects</span></h1>
+          <p class="tab-subtitle">Track the verification of your e-waste scrap submissions and upcycled kit orders.</p>
+        </div>
+
+        <div class="scrap-sections-split">
+          <div class="scrap-split-column">
+            <h3 class="split-col-title">♻️ E-Waste Submissions</h3>
+            <div id="scrap-submissions-list"></div>
+          </div>
+          <div class="scrap-split-column">
+            <h3 class="split-col-title">🛒 Upcycled Kit Orders</h3>
+            <div id="scrap-orders-list"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======= IMPACT TRACKER TAB ======= -->
+      <section class="portal-tab" id="tab-impact">
+        <div class="tab-header">
+          <h1 class="tab-title">📈 Environmental <span class="gradient-text text-green-gold">Impact Tracker</span></h1>
+          <p class="tab-subtitle">See your direct contribution toward e-waste reduction and carbon offsets.</p>
+        </div>
+
+        <!-- Stats Row -->
+        <div class="stats-row">
+          <div class="stat-card stat-green">
+            <div class="stat-card-icon">🍃</div>
+            <div class="stat-card-body">
+              <span class="stat-card-num" id="impact-credits">120</span>
+              <span class="stat-card-label">Eco-Credits Earned</span>
+            </div>
+          </div>
+          <div class="stat-card stat-blue">
+            <div class="stat-card-icon">📦</div>
+            <div class="stat-card-body">
+              <span class="stat-card-num" id="impact-waste">2.8 kg</span>
+              <span class="stat-card-label">E-Waste Diverted</span>
+            </div>
+          </div>
+          <div class="stat-card stat-gold">
+            <div class="stat-card-icon">☁️</div>
+            <div class="stat-card-body">
+              <span class="stat-card-num" id="impact-co2">6.4 kg</span>
+              <span class="stat-card-label">CO2 Equivalent Offset</span>
+            </div>
+          </div>
+          <div class="stat-card stat-purple">
+            <div class="stat-card-icon">🧩</div>
+            <div class="stat-card-body">
+              <span class="stat-card-num" id="impact-parts">14</span>
+              <span class="stat-card-label">Components Reused</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="impact-info-section section-card" style="margin-top: 2rem; padding: 2rem;">
+          <h3>🌱 Why Upcycling E-Waste Matters</h3>
+          <p style="color: var(--text-dim); font-size: 0.9rem; line-height: 1.6; margin: 1rem 0;">
+            Electronic waste contains high-value microcontrollers, copper wiring, gear assemblies, lithium battery cells, and sensors. By reclaiming these components instead of dumping them, we prevent toxic heavy metals from contaminating landfills while offering low-cost educational resources to innovators.
+          </p>
+          <div class="impact-benefits-grid">
+            <div class="benefit-item">
+              <strong>90% Less Waste</strong>
+              <p>Reclaiming motors and batteries reduces raw copper and silicon mining demands.</p>
+            </div>
+            <div class="benefit-item">
+              <strong>Affordable Education</strong>
+              <p>Providing low-cost upcycled kits to classrooms and young student makers.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div class="order-toast hidden" id="scrap-toast">
+    <span class="toast-icon">✅</span>
+    <div>
+      <strong id="scrap-toast-title">Scrap Submission Logged</strong>
+      <p id="scrap-toast-msg">Points will be added post-verification.</p>
+    </div>
+  </div>
+
+  <script src="auth.js"></script>
+  <script src="scrap_dashboard.js"></script>
+</body>
+</html>

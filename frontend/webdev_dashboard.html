@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Web Dev Dashboard – Infinite Services</title>
+  <meta name="description" content="Web Development Service Dashboard – Book full-stack projects, browse our portfolio, and track your project status." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700&family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="portal.css" />
+</head>
+<body class="portal-body">
+  <canvas id="particleCanvas"></canvas>
+
+  <!-- NAVBAR -->
+  <nav id="navbar" class="scrolled portal-nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <div class="logo-symbol">∞</div>
+        <div class="logo-text">
+          <span class="logo-main">INFINITE</span>
+          <span class="logo-sub">SERVICES</span>
+        </div>
+      </a>
+      <div class="portal-nav-center">
+        <span class="portal-badge webdev-badge">💻 Web Development</span>
+      </div>
+      <div class="nav-user-area" id="nav-user-area">
+        <div class="nav-user-chip" id="nav-user-chip">
+          <div class="user-avatar" id="user-avatar-nav">U</div>
+          <span id="user-name-nav">Customer</span>
+        </div>
+        <button class="nav-signout-btn" id="nav-signout-btn">Sign Out</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN LAYOUT -->
+  <div class="portal-layout" id="portal-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="portal-sidebar" id="portal-sidebar">
+      <nav class="sidebar-nav">
+        <button class="sidebar-item active" data-tab="booking" id="sidebar-booking">
+          <span class="sidebar-icon">💻</span>
+          <span>Book Project</span>
+        </button>
+        <button class="sidebar-item" data-tab="portfolio" id="sidebar-portfolio">
+          <span class="sidebar-icon">🌐</span>
+          <span>Portfolio</span>
+          <span class="sidebar-badge" style="background:var(--purple);color:#fff">3</span>
+        </button>
+        <button class="sidebar-item" data-tab="my-bookings" id="sidebar-my-bookings">
+          <span class="sidebar-icon">📋</span>
+          <span>My Bookings</span>
+        </button>
+        <button class="sidebar-item" data-tab="techstack" id="sidebar-techstack">
+          <span class="sidebar-icon">🛠️</span>
+          <span>Tech Stack</span>
+        </button>
+        <button class="sidebar-item" data-tab="process" id="sidebar-process">
+          <span class="sidebar-icon">🚀</span>
+          <span>Our Process</span>
+        </button>
+      </nav>
+      <a href="dashboard.html" class="sidebar-back-btn">← Back to Dashboard</a>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="portal-main" id="portal-main">
+
+      <!-- ======= BOOKING TAB ======= -->
+      <section class="portal-tab active" id="tab-booking">
+        <div class="tab-header">
+          <h1 class="tab-title">💻 Book a <span class="gradient-text">Dev Project</span></h1>
+          <p class="tab-subtitle">Tell us what you want to build — we'll turn your idea into a live full-stack application.</p>
+        </div>
+
+        <div class="section-card portal-form-container" style="max-width:640px;">
+          <form id="webdev-booking-form">
+            <div class="portal-form-group">
+              <label for="wd-project-type" class="portal-form-label">Project Type</label>
+              <select id="wd-project-type" class="portal-select" required>
+                <option value="">— Select a project type —</option>
+                <option value="Landing Page">Landing Page / Portfolio Site</option>
+                <option value="Full-Stack App">Full-Stack Web Application</option>
+                <option value="DBMS App">Database-Driven Application</option>
+                <option value="REST API">REST API / Backend Service</option>
+                <option value="E-Commerce">E-Commerce Platform</option>
+                <option value="Dashboard">Admin / Analytics Dashboard</option>
+                <option value="Custom">Custom Project</option>
+              </select>
+            </div>
+
+            <div class="portal-form-group">
+              <label class="portal-form-label">Preferred Tech Stack</label>
+              <div class="wd-stack-grid" id="wd-stack-grid">
+                <label class="wd-stack-pill"><input type="checkbox" value="React" /> React</label>
+                <label class="wd-stack-pill"><input type="checkbox" value="Next.js" /> Next.js</label>
+                <label class="wd-stack-pill"><input type="checkbox" value="Node.js" /> Node.js</label>
+                <label class="wd-stack-pill"><input type="checkbox" value="Express" /> Express</label>
+                <label class="wd-stack-pill"><input type="checkbox" value="MongoDB" /> MongoDB</label>
+                <label class="wd-stack-pill"><input type="checkbox" value="PostgreSQL" /> PostgreSQL</label>
+                <label class="wd-stack-pill"><input type="checkbox" value="MySQL" /> MySQL</label>
+                <label class="wd-stack-pill"><input type="checkbox" value="Firebase" /> Firebase</label>
+                <label class="wd-stack-pill"><input type="checkbox" value="TypeScript" /> TypeScript</label>
+                <label class="wd-stack-pill"><input type="checkbox" value="Vite" /> Vite</label>
+              </div>
+            </div>
+
+            <div class="wd-form-row">
+              <div class="portal-form-group">
+                <label for="wd-timeline" class="portal-form-label">Timeline</label>
+                <select id="wd-timeline" class="portal-select" required>
+                  <option value="">— Select —</option>
+                  <option value="1 Week">1 Week</option>
+                  <option value="2 Weeks">2 Weeks</option>
+                  <option value="1 Month">1 Month</option>
+                  <option value="2 Months">2 Months</option>
+                  <option value="Flexible">Flexible</option>
+                </select>
+              </div>
+              <div class="portal-form-group">
+                <label for="wd-budget" class="portal-form-label">Budget Range</label>
+                <select id="wd-budget" class="portal-select" required>
+                  <option value="">— Select —</option>
+                  <option value="₹5K–₹15K">₹5,000 – ₹15,000</option>
+                  <option value="₹15K–₹30K">₹15,000 – ₹30,000</option>
+                  <option value="₹30K–₹60K">₹30,000 – ₹60,000</option>
+                  <option value="₹60K+">₹60,000+</option>
+                  <option value="Discuss">Let's Discuss</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="portal-form-group">
+              <label for="wd-title" class="portal-form-label">Project Name / Title</label>
+              <input type="text" id="wd-title" class="portal-input" placeholder="e.g. E-Commerce Platform for Local Store" required />
+            </div>
+
+            <div class="portal-form-group">
+              <label for="wd-desc" class="portal-form-label">Project Description & Requirements</label>
+              <textarea id="wd-desc" class="portal-textarea" rows="5" placeholder="Describe your project idea, key features, pages, integrations needed..." required></textarea>
+            </div>
+
+            <button type="submit" class="btn-checkout" style="width:100%;margin-top:0.5rem;">
+              🚀 Submit Project Request
+            </button>
+          </form>
+          <div id="wd-booking-success" class="success-msg">Your project request has been submitted! We'll contact you within 24 hours.</div>
+        </div>
+      </section>
+
+      <!-- ======= PORTFOLIO TAB ======= -->
+      <section class="portal-tab" id="tab-portfolio">
+        <div class="tab-header">
+          <h1 class="tab-title">🌐 Our <span class="gradient-text">Portfolio</span></h1>
+          <p class="tab-subtitle">Real projects we've built — live and deployed. See what we can build for you.</p>
+        </div>
+
+        <div class="portfolio-grid">
+
+          <!-- Project 1: VentureVibe -->
+          <div class="portfolio-card">
+            <div class="portfolio-preview">
+              <img src="images/venturevibe_preview.png" alt="VentureVibe – Travel Booking App" class="portfolio-img" />
+              <div class="portfolio-preview-overlay">
+                <a href="https://fsdmini-frontend.onrender.com" target="_blank" rel="noopener" class="portfolio-live-btn">
+                  🔗 View Live →
+                </a>
+              </div>
+              <span class="portfolio-category-tag fullstack-tag">Full-Stack</span>
+            </div>
+            <div class="portfolio-card-body">
+              <div class="portfolio-card-title-row">
+                <span class="portfolio-emoji">🧳</span>
+                <h3 class="portfolio-title">VentureVibe</h3>
+              </div>
+              <p class="portfolio-desc">Premium travel destination booking platform with smooth animations, curated destinations, and an immersive browsing experience.</p>
+              <div class="portfolio-tags">
+                <span class="tech-tag react-tag">React</span>
+                <span class="tech-tag">Vite</span>
+                <span class="tech-tag">Node.js</span>
+                <span class="tech-tag">REST API</span>
+                <span class="tech-tag render-tag">Render</span>
+              </div>
+              <a href="https://fsdmini-frontend.onrender.com" target="_blank" rel="noopener" class="portfolio-cta-btn">
+                View Live <span>↗</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Project 2: ResQNet -->
+          <div class="portfolio-card">
+            <div class="portfolio-preview">
+              <img src="images/resqnet_preview.png" alt="ResQNet – Disaster Response Platform" class="portfolio-img" />
+              <div class="portfolio-preview-overlay">
+                <a href="https://res-q-net-sigma.vercel.app" target="_blank" rel="noopener" class="portfolio-live-btn">
+                  🔗 View Live →
+                </a>
+              </div>
+              <span class="portfolio-category-tag emergency-tag">Emergency Tech</span>
+            </div>
+            <div class="portfolio-card-body">
+              <div class="portfolio-card-title-row">
+                <span class="portfolio-emoji">🚨</span>
+                <h3 class="portfolio-title">ResQNet</h3>
+              </div>
+              <p class="portfolio-desc">Real-time disaster information aggregation system for NDRF — live maps, multi-language support, and instant situational awareness. <strong style="color:var(--blue)">SIH 2024</strong></p>
+              <div class="portfolio-tags">
+                <span class="tech-tag react-tag">React</span>
+                <span class="tech-tag">Vite</span>
+                <span class="tech-tag">Leaflet.js</span>
+                <span class="tech-tag">i18n</span>
+                <span class="tech-tag vercel-tag">Vercel</span>
+              </div>
+              <a href="https://res-q-net-sigma.vercel.app" target="_blank" rel="noopener" class="portfolio-cta-btn">
+                View Live <span>↗</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Project 3: DBMS App -->
+          <div class="portfolio-card">
+            <div class="portfolio-preview">
+              <img src="images/dbms_preview.png" alt="DBMS Web Application" class="portfolio-img" />
+              <div class="portfolio-preview-overlay">
+                <a href="https://dbms-lemon.vercel.app" target="_blank" rel="noopener" class="portfolio-live-btn">
+                  🔗 View Live →
+                </a>
+              </div>
+              <span class="portfolio-category-tag dbms-tag">DBMS App</span>
+            </div>
+            <div class="portfolio-card-body">
+              <div class="portfolio-card-title-row">
+                <span class="portfolio-emoji">🗄️</span>
+                <h3 class="portfolio-title">DBMS Application</h3>
+              </div>
+              <p class="portfolio-desc">Full-featured database-driven web application with complete CRUD operations, structured data management, and clean responsive UI.</p>
+              <div class="portfolio-tags">
+                <span class="tech-tag react-tag">React</span>
+                <span class="tech-tag">Vite</span>
+                <span class="tech-tag">SQL / DBMS</span>
+                <span class="tech-tag">REST API</span>
+                <span class="tech-tag vercel-tag">Vercel</span>
+              </div>
+              <a href="https://dbms-lemon.vercel.app" target="_blank" rel="noopener" class="portfolio-cta-btn">
+                View Live <span>↗</span>
+              </a>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- CTA Banner -->
+        <div class="portfolio-cta-banner">
+          <div class="cta-banner-text">
+            <h3>Like what you see?</h3>
+            <p>We can build something like this — or better — for your idea.</p>
+          </div>
+          <button class="btn-checkout" onclick="document.querySelector('[data-tab=booking]').click()">
+            💻 Book Your Project
+          </button>
+        </div>
+      </section>
+
+      <!-- ======= MY BOOKINGS TAB ======= -->
+      <section class="portal-tab" id="tab-my-bookings">
+        <div class="tab-header">
+          <h1 class="tab-title">📋 My <span class="gradient-text">Bookings</span></h1>
+          <p class="tab-subtitle">Track the status of your submitted web development project requests.</p>
+        </div>
+        <div class="orders-list" id="wd-bookings-list"></div>
+      </section>
+
+      <!-- ======= TECH STACK TAB ======= -->
+      <section class="portal-tab" id="tab-techstack">
+        <div class="tab-header">
+          <h1 class="tab-title">🛠️ Our <span class="gradient-text">Tech Stack</span></h1>
+          <p class="tab-subtitle">Modern technologies we use to build fast, scalable, and beautiful applications.</p>
+        </div>
+
+        <div class="techstack-sections">
+          <div class="techstack-group">
+            <div class="techstack-group-label">⚛️ Frontend</div>
+            <div class="techstack-grid">
+              <div class="tech-card"><span class="tech-card-icon">⚛️</span><span class="tech-card-name">React</span></div>
+              <div class="tech-card"><span class="tech-card-icon">▲</span><span class="tech-card-name">Next.js</span></div>
+              <div class="tech-card"><span class="tech-card-icon">⚡</span><span class="tech-card-name">Vite</span></div>
+              <div class="tech-card"><span class="tech-card-icon">🔷</span><span class="tech-card-name">TypeScript</span></div>
+              <div class="tech-card"><span class="tech-card-icon">🎨</span><span class="tech-card-name">Tailwind CSS</span></div>
+              <div class="tech-card"><span class="tech-card-icon">🧩</span><span class="tech-card-name">HTML / CSS</span></div>
+            </div>
+          </div>
+          <div class="techstack-group">
+            <div class="techstack-group-label">🖥️ Backend</div>
+            <div class="techstack-grid">
+              <div class="tech-card"><span class="tech-card-icon">🟢</span><span class="tech-card-name">Node.js</span></div>
+              <div class="tech-card"><span class="tech-card-icon">🚂</span><span class="tech-card-name">Express</span></div>
+              <div class="tech-card"><span class="tech-card-icon">🔴</span><span class="tech-card-name">REST API</span></div>
+              <div class="tech-card"><span class="tech-card-icon">🌐</span><span class="tech-card-name">GraphQL</span></div>
+            </div>
+          </div>
+          <div class="techstack-group">
+            <div class="techstack-group-label">🗄️ Database</div>
+            <div class="techstack-grid">
+              <div class="tech-card"><span class="tech-card-icon">🍃</span><span class="tech-card-name">MongoDB</span></div>
+              <div class="tech-card"><span class="tech-card-icon">🐘</span><span class="tech-card-name">PostgreSQL</span></div>
+              <div class="tech-card"><span class="tech-card-icon">🐬</span><span class="tech-card-name">MySQL</span></div>
+              <div class="tech-card"><span class="tech-card-icon">🔥</span><span class="tech-card-name">Firebase</span></div>
+            </div>
+          </div>
+          <div class="techstack-group">
+            <div class="techstack-group-label">☁️ Deployment</div>
+            <div class="techstack-grid">
+              <div class="tech-card"><span class="tech-card-icon">▲</span><span class="tech-card-name">Vercel</span></div>
+              <div class="tech-card"><span class="tech-card-icon">🟣</span><span class="tech-card-name">Render</span></div>
+              <div class="tech-card"><span class="tech-card-icon">🐳</span><span class="tech-card-name">Docker</span></div>
+              <div class="tech-card"><span class="tech-card-icon">☁️</span><span class="tech-card-name">AWS / GCP</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======= PROCESS TAB ======= -->
+      <section class="portal-tab" id="tab-process">
+        <div class="tab-header">
+          <h1 class="tab-title">🚀 Our <span class="gradient-text">Process</span></h1>
+          <p class="tab-subtitle">How we take your idea from concept to a live, deployed application.</p>
+        </div>
+
+        <div class="process-steps">
+          <div class="process-step">
+            <div class="process-step-num">01</div>
+            <div class="process-step-icon">💬</div>
+            <h3 class="process-step-title">Discovery Call</h3>
+            <p class="process-step-desc">You submit a booking request. We schedule a quick call to understand your vision, goals, tech preferences, and timeline.</p>
+            <div class="process-step-duration">Day 1</div>
+          </div>
+          <div class="process-connector">→</div>
+          <div class="process-step">
+            <div class="process-step-num">02</div>
+            <div class="process-step-icon">📐</div>
+            <h3 class="process-step-title">Design & Plan</h3>
+            <p class="process-step-desc">We wireframe the UI, define the database schema, plan the API structure, and share a detailed project roadmap for your approval.</p>
+            <div class="process-step-duration">Days 2–3</div>
+          </div>
+          <div class="process-connector">→</div>
+          <div class="process-step">
+            <div class="process-step-num">03</div>
+            <div class="process-step-icon">⚙️</div>
+            <h3 class="process-step-title">Build & Iterate</h3>
+            <p class="process-step-desc">We develop the full application — frontend, backend, and database — with regular progress updates and staging previews for your feedback.</p>
+            <div class="process-step-duration">Week 1–4</div>
+          </div>
+          <div class="process-connector">→</div>
+          <div class="process-step">
+            <div class="process-step-num">04</div>
+            <div class="process-step-icon">🚀</div>
+            <h3 class="process-step-title">Deploy & Deliver</h3>
+            <p class="process-step-desc">We deploy your application on Vercel / Render / your preferred host, hand over all source code, and provide post-launch support.</p>
+            <div class="process-step-duration">Final Day</div>
+          </div>
+        </div>
+
+        <!-- Stats Row -->
+        <div class="process-stats-row">
+          <div class="process-stat">
+            <span class="process-stat-val">3+</span>
+            <span class="process-stat-label">Live Projects</span>
+          </div>
+          <div class="process-stat">
+            <span class="process-stat-val">100%</span>
+            <span class="process-stat-label">On-Time Delivery</span>
+          </div>
+          <div class="process-stat">
+            <span class="process-stat-val">React</span>
+            <span class="process-stat-label">Primary Frontend</span>
+          </div>
+          <div class="process-stat">
+            <span class="process-stat-val">24h</span>
+            <span class="process-stat-label">Response Time</span>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ORDER SUCCESS TOAST -->
+  <div class="order-toast hidden" id="wd-toast">
+    <span class="toast-icon">✅</span>
+    <div>
+      <strong>Request Submitted!</strong>
+      <p>We'll reach out within 24 hours.</p>
+    </div>
+  </div>
+
+  <script src="auth.js"></script>
+  <script src="webdev_dashboard.js"></script>
+</body>
+</html>

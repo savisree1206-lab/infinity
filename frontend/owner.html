@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Owner Dashboard – Infinite Services</title>
+  <meta name="description" content="Owner dashboard for Infinite Services — manage orders, products, and notifications." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="portal.css" />
+</head>
+<body class="portal-body">
+  <canvas id="particleCanvas"></canvas>
+
+  <!-- NAVBAR -->
+  <nav id="navbar" class="scrolled portal-nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <div class="logo-symbol">∞</div>
+        <div class="logo-text">
+          <span class="logo-main">INFINITE</span>
+          <span class="logo-sub">SERVICES</span>
+        </div>
+      </a>
+      <div class="portal-nav-center">
+        <span class="portal-badge owner-badge">🏪 Owner Dashboard</span>
+      </div>
+      <div class="nav-user-area" id="nav-user-area">
+        <!-- Notification Bell -->
+        <div class="notif-bell" id="notif-bell" title="New Orders">
+          <span class="bell-icon">🔔</span>
+          <span class="notif-badge hidden" id="notif-badge">0</span>
+        </div>
+        <div class="nav-user-chip" id="nav-user-chip">
+          <div class="user-avatar owner-avatar" id="user-avatar-nav">O</div>
+          <span id="user-name-nav">Owner</span>
+        </div>
+        <button class="nav-signout-btn" id="nav-signout-btn">Sign Out</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN LAYOUT -->
+  <div class="portal-layout" id="portal-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="portal-sidebar" id="portal-sidebar">
+      <nav class="sidebar-nav">
+        <button class="sidebar-item active" data-tab="overview" id="sidebar-overview">
+          <span class="sidebar-icon">📊</span>
+          <span>Overview</span>
+        </button>
+        <button class="sidebar-item" data-tab="orders" id="sidebar-orders">
+          <span class="sidebar-icon">📦</span>
+          <span>All Orders</span>
+          <span class="sidebar-badge hidden" id="sidebar-order-badge">0</span>
+        </button>
+        <button class="sidebar-item" data-tab="products" id="sidebar-products">
+          <span class="sidebar-icon">⚡</span>
+          <span>Products</span>
+        </button>
+        <button class="sidebar-item" data-tab="profile" id="sidebar-profile">
+          <span class="sidebar-icon">👤</span>
+          <span>Profile</span>
+        </button>
+      </nav>
+      <a href="index.html" class="sidebar-back-btn">← Back to Site</a>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="portal-main" id="portal-main">
+
+      <!-- ======= OVERVIEW TAB ======= -->
+      <section class="portal-tab active" id="tab-overview">
+        <div class="tab-header">
+          <h1 class="tab-title">📊 Business <span class="gradient-text">Overview</span></h1>
+          <p class="tab-subtitle">Welcome back! Here's what's happening today.</p>
+        </div>
+
+        <!-- Stats Row -->
+        <div class="stats-row" id="overview-stats">
+          <div class="stat-card stat-blue">
+            <div class="stat-card-icon">📦</div>
+            <div class="stat-card-body">
+              <span class="stat-card-num" id="stat-total-orders">0</span>
+              <span class="stat-card-label">Total Orders</span>
+            </div>
+          </div>
+          <div class="stat-card stat-gold">
+            <div class="stat-card-icon">🔔</div>
+            <div class="stat-card-body">
+              <span class="stat-card-num" id="stat-new-orders">0</span>
+              <span class="stat-card-label">New Orders</span>
+            </div>
+          </div>
+          <div class="stat-card stat-green">
+            <div class="stat-card-icon">✅</div>
+            <div class="stat-card-body">
+              <span class="stat-card-num" id="stat-fulfilled">0</span>
+              <span class="stat-card-label">Fulfilled</span>
+            </div>
+          </div>
+          <div class="stat-card stat-purple">
+            <div class="stat-card-icon">💰</div>
+            <div class="stat-card-body">
+              <span class="stat-card-num" id="stat-revenue">₹0</span>
+              <span class="stat-card-label">Total Revenue</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Orders Preview -->
+        <div class="section-card">
+          <div class="section-card-header">
+            <h3>Recent Orders</h3>
+            <button class="btn-link" id="view-all-orders-btn">View All →</button>
+          </div>
+          <div id="recent-orders-table"></div>
+        </div>
+      </section>
+
+      <!-- ======= ORDERS TAB ======= -->
+      <section class="portal-tab" id="tab-orders">
+        <div class="tab-header">
+          <h1 class="tab-title">📦 All <span class="gradient-text">Orders</span></h1>
+          <div class="order-filter-row">
+            <select id="order-status-filter" class="portal-select">
+              <option value="All">All Statuses</option>
+              <option value="Pending">Pending</option>
+              <option value="Processing">Processing</option>
+              <option value="Fulfilled">Fulfilled</option>
+              <option value="Cancelled">Cancelled</option>
+            </select>
+          </div>
+        </div>
+        <div id="all-orders-table"></div>
+      </section>
+
+      <!-- ======= PRODUCTS TAB ======= -->
+      <section class="portal-tab" id="tab-products">
+        <div class="tab-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+          <div>
+            <h1 class="tab-title">⚡ Product <span class="gradient-text">Catalog</span></h1>
+            <p class="tab-subtitle">View and manage all electrical components.</p>
+          </div>
+          <button class="nav-goto-dashboard" id="add-product-btn" style="font-size: 0.85rem; padding: 0.6rem 1.4rem;">+ Add Product</button>
+        </div>
+        <div class="product-grid" id="owner-product-grid"></div>
+      </section>
+
+      <!-- ======= PROFILE TAB ======= -->
+      <section class="portal-tab" id="tab-profile">
+        <div class="tab-header">
+          <h1 class="tab-title">👤 Owner <span class="gradient-text">Profile</span></h1>
+        </div>
+        <div class="profile-card" id="profile-card">
+          <div class="profile-avatar-big owner-avatar-big" id="profile-avatar-big">O</div>
+          <div class="profile-details">
+            <div class="profile-row"><span class="profile-label">Name</span><span id="profile-name">—</span></div>
+            <div class="profile-row"><span class="profile-label">Email</span><span id="profile-email">—</span></div>
+            <div class="profile-row"><span class="profile-label">Role</span><span class="owner-badge-sm">🏪 Owner</span></div>
+          </div>
+          <button class="btn-danger" id="profile-signout-btn">Sign Out</button>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- NEW ORDER TOAST NOTIFICATION -->
+  <div class="order-toast owner-toast hidden" id="owner-toast">
+    <span class="toast-icon">🔔</span>
+    <div>
+      <strong>New Order Received!</strong>
+      <p id="owner-toast-msg">A customer just placed a new order.</p>
+    </div>
+    <button class="toast-dismiss" id="toast-dismiss-btn">✕</button>
+  </div>
+
+  <!-- PRODUCT MODAL -->
+  <div class="auth-modal-overlay" id="product-modal" role="dialog" aria-modal="true" aria-label="Product Management Modal">
+    <div class="auth-modal">
+      <div class="auth-modal-inner admin-mode">
+        <button class="auth-modal-close" id="product-modal-close" aria-label="Close">✕</button>
+        <h2 id="product-modal-title">⚡ Add New <span class="gradient-text">Product</span></h2>
+        <p class="auth-modal-subtitle" id="product-modal-subtitle">Enter details to add a product to the catalog.</p>
+        
+        <form id="product-form" onsubmit="return false;">
+          <input type="hidden" id="product-id" />
+          
+          <div class="auth-field">
+            <label for="product-name">Product Name</label>
+            <input type="text" id="product-name" placeholder="e.g. Resistor 10Ω Pack" required />
+          </div>
+          
+          <div class="auth-field">
+            <label for="product-category">Category</label>
+            <input type="text" id="product-category" placeholder="e.g. Passive" required />
+          </div>
+          
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 0.2rem;">
+            <div class="auth-field">
+              <label for="product-price">Price (₹)</label>
+              <input type="number" id="product-price" min="0" placeholder="e.g. 15" required />
+            </div>
+            <div class="auth-field">
+              <label for="product-stock">Stock</label>
+              <input type="number" id="product-stock" min="0" placeholder="e.g. 100" required />
+            </div>
+          </div>
+          
+          <div class="auth-field">
+            <label for="product-unit">Unit</label>
+            <input type="text" id="product-unit" placeholder="e.g. pack of 20, piece" required />
+          </div>
+
+          <div class="auth-field">
+            <label>Product Image</label>
+            <div class="image-upload-wrapper" style="display: flex; align-items: center; gap: 1rem; background: rgba(255,255,255,0.03); border: 1.5px dashed rgba(255,255,255,0.15); border-radius: 10px; padding: 0.75rem 1rem; margin-top: 0.25rem;">
+              <div class="image-preview-box" style="width: 50px; height: 50px; border-radius: 8px; overflow: hidden; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); position: relative; border: 1px solid rgba(255,255,255,0.1);">
+                <img id="product-image-preview" src="" style="width: 100%; height: 100%; object-fit: cover; display: none;" />
+                <span id="product-image-placeholder" style="font-size: 1.4rem; color: rgba(255,255,255,0.3);">📷</span>
+              </div>
+              <div style="flex: 1; display: flex; flex-direction: column; gap: 0.25rem;">
+                <label for="product-image-file" class="btn-link" style="display: inline-block; cursor: pointer; color: var(--blue); font-size: 0.85rem; font-weight: 500; text-decoration: underline; margin-bottom: 0;">
+                  Upload image from browser
+                </label>
+                <input type="file" id="product-image-file" accept="image/*" style="display: none;" />
+                <span id="product-image-filename" style="font-size: 0.75rem; color: rgba(255,255,255,0.4); word-break: break-all;">No image selected</span>
+              </div>
+              <button type="button" id="product-image-remove" class="btn-danger" style="display: none; padding: 0.3rem 0.6rem; font-size: 0.75rem; border-radius: 6px; background: rgba(255,60,60,0.15); border: 1px solid rgba(255,60,60,0.3); color: #ff8080; cursor: pointer; transition: 0.2s;">Remove</button>
+            </div>
+          </div>
+
+          
+          <div class="auth-field" style="margin-bottom: 0.6rem;">
+            <label for="product-desc">Description</label>
+            <textarea id="product-desc" style="width: 100%; min-height: 80px; background: rgba(255,255,255,0.05); border: 1.5px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 0.75rem 1rem; color: var(--text); font-family: var(--font-body); font-size: 0.9rem; outline: none; resize: vertical;" placeholder="Enter product description..." required></textarea>
+          </div>
+          
+          <div class="auth-field-err" id="product-form-err" style="margin-bottom: 0.5rem; text-align: center; color: #ff6060;"></div>
+          
+          <button type="submit" class="auth-submit-btn" id="product-submit-btn">Save Product</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="auth.js"></script>
+  <script src="shop.js"></script>
+  <script src="owner.js"></script>
+</body>
+</html>

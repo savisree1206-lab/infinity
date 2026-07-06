@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Electronics Dashboard – Infinite Services</title>
+  <meta name="description" content="Electronics Service Dashboard for Infinite Services. Book projects and shop components." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="portal.css" />
+</head>
+<body class="portal-body">
+  <canvas id="particleCanvas"></canvas>
+
+  <!-- NAVBAR -->
+  <nav id="navbar" class="scrolled portal-nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <div class="logo-symbol">∞</div>
+        <div class="logo-text">
+          <span class="logo-main">INFINITE</span>
+          <span class="logo-sub">SERVICES</span>
+        </div>
+      </a>
+      <div class="portal-nav-center">
+        <span class="portal-badge electronics-badge">⚡ Electronics Service</span>
+      </div>
+      <div class="nav-user-area" id="nav-user-area">
+        <div class="cart-trigger" id="cart-trigger-btn" title="View Cart">
+          <span class="cart-icon">🛒</span>
+          <span class="cart-badge" id="cart-badge">0</span>
+        </div>
+        <div class="nav-user-chip" id="nav-user-chip">
+          <div class="user-avatar" id="user-avatar-nav">U</div>
+          <span id="user-name-nav">Customer</span>
+        </div>
+        <button class="nav-signout-btn" id="nav-signout-btn">Sign Out</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN LAYOUT -->
+  <div class="portal-layout" id="portal-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="portal-sidebar" id="portal-sidebar">
+      <nav class="sidebar-nav">
+        <button class="sidebar-item active" data-tab="booking" id="sidebar-booking">
+          <span class="sidebar-icon">📝</span>
+          <span>Book Service</span>
+        </button>
+        <button class="sidebar-item" data-tab="shop" id="sidebar-shop">
+          <span class="sidebar-icon">🏪</span>
+          <span>Components Shop</span>
+        </button>
+        <button class="sidebar-item" data-tab="my-bookings" id="sidebar-my-bookings">
+          <span class="sidebar-icon">📋</span>
+          <span>My Projects</span>
+        </button>
+        <button class="sidebar-item" data-tab="orders" id="sidebar-orders">
+          <span class="sidebar-icon">📦</span>
+          <span>Shop Orders</span>
+        </button>
+        <button class="sidebar-item" data-tab="learn" id="sidebar-learn">
+          <span class="sidebar-icon">📺</span>
+          <span>Learn & Watch</span>
+          <span class="sidebar-badge" style="background:var(--blue);color:#000">▶</span>
+        </button>
+      </nav>
+      <a href="dashboard.html" class="sidebar-back-btn">← Back to Dashboard</a>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="portal-main" id="portal-main">
+
+      <!-- ======= BOOKING TAB ======= -->
+      <section class="portal-tab active" id="tab-booking">
+        <div class="tab-header">
+          <h1 class="tab-title">📝 Book <span class="gradient-text">Electrical Service</span></h1>
+          <p class="tab-subtitle">Submit a request for an electrical repair, PCB design, or IoT project.</p>
+        </div>
+        
+        <div class="section-card portal-form-container">
+          <form id="service-booking-form">
+            <div class="portal-form-group">
+              <label for="project-type" class="portal-form-label">Project Type</label>
+              <select id="project-type" class="portal-select" required>
+                <option value="Repair">Electrical Repair</option>
+                <option value="PCB">PCB Design</option>
+                <option value="IoT">IoT Project</option>
+                <option value="Custom">Custom Component Build</option>
+              </select>
+            </div>
+            
+            <div class="portal-form-group">
+              <label for="project-title" class="portal-form-label">Project Title</label>
+              <input type="text" id="project-title" class="portal-input" placeholder="e.g. Arduino Smart Home Hub" required />
+            </div>
+
+            <div class="portal-form-group">
+              <label for="project-desc" class="portal-form-label">Requirements / Description</label>
+              <textarea id="project-desc" class="portal-textarea" rows="5" placeholder="Describe what you need..." required></textarea>
+            </div>
+            
+            <button type="submit" class="btn-checkout" style="width: 100%;">Submit Booking Request</button>
+          </form>
+          <div id="booking-success-msg" class="success-msg">Your booking request has been submitted successfully!</div>
+        </div>
+      </section>
+
+      <!-- ======= SHOP TAB ======= -->
+      <section class="portal-tab" id="tab-shop">
+        <div class="tab-header">
+          <h1 class="tab-title">⚡ Components <span class="gradient-text">Shop</span></h1>
+          <p class="tab-subtitle">Browse and purchase electrical components for your projects.</p>
+        </div>
+
+        <div class="category-filter" id="category-filter"></div>
+        <div class="search-bar-wrap">
+          <input type="search" id="product-search" placeholder="🔍  Search components..." class="product-search" />
+        </div>
+        <div class="product-grid" id="product-grid"></div>
+      </section>
+
+      <!-- ======= MY BOOKINGS TAB ======= -->
+      <section class="portal-tab" id="tab-my-bookings">
+        <div class="tab-header">
+          <h1 class="tab-title">📋 My <span class="gradient-text">Projects</span></h1>
+          <p class="tab-subtitle">Track the status of your requested electrical services and IoT projects.</p>
+        </div>
+        <div class="orders-list" id="bookings-list"></div>
+      </section>
+
+      <!-- ======= ORDERS TAB (SHOP) ======= -->
+      <section class="portal-tab" id="tab-orders">
+        <div class="tab-header">
+          <h1 class="tab-title">📦 Shop <span class="gradient-text">Orders</span></h1>
+          <p class="tab-subtitle">Track your component orders and their current status.</p>
+        </div>
+        <div class="orders-list" id="orders-list"></div>
+      </section>
+
+      <!-- ======= LEARN TAB ======= -->
+      <section class="portal-tab" id="tab-learn">
+        <div class="tab-header">
+          <h1 class="tab-title">📺 Learn <span class="gradient-text">Electronics</span></h1>
+          <p class="tab-subtitle">Watch curated tutorials from the Electronic Designer channel to master circuits and components.</p>
+        </div>
+
+        <!-- Channel Hero Card -->
+        <div class="learn-channel-card section-card">
+          <div class="learn-channel-left">
+            <div class="learn-channel-avatar">⚡</div>
+            <div class="learn-channel-info">
+              <h2 class="learn-channel-name">Electronic Designer</h2>
+              <p class="learn-channel-sub">Circuits · PCB Design · IoT · Arduino Projects</p>
+              <a href="https://www.youtube.com/@electronic_designer" target="_blank" rel="noopener" class="learn-channel-link">
+                🔗 Visit Channel &rarr;
+              </a>
+            </div>
+          </div>
+          <a href="https://www.youtube.com/@electronic_designer?sub_confirmation=1" target="_blank" rel="noopener" class="learn-subscribe-btn">
+            ▶ Subscribe
+          </a>
+        </div>
+
+        <!-- Featured Video -->
+        <div class="learn-video-section">
+          <div class="learn-video-label">🎬 Featured Tutorial</div>
+
+          <!-- Direct Embed -->
+          <div class="learn-video-wrap" id="learn-video-wrap">
+            <iframe
+              src="https://www.youtube-nocookie.com/embed/xryM_5zuDZI?rel=0&modestbranding=1&color=white"
+              title="Electronics Tutorial – Electronic Designer"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowfullscreen
+              loading="lazy"
+            ></iframe>
+          </div>
+
+          <div class="learn-video-meta">
+            <span class="learn-video-badge">📡 Electronics Tutorial</span>
+            <span class="learn-video-badge">🔧 Circuit Design</span>
+            <span class="learn-video-badge">🧩 DIY Projects</span>
+          </div>
+        </div>
+
+        <!-- Tips Grid -->
+        <div class="learn-tips-grid">
+          <div class="learn-tip-card">
+            <span class="learn-tip-icon">🔌</span>
+            <h4>Before You Book</h4>
+            <p>Watch tutorials to understand your project scope before submitting a booking — it helps us quote faster.</p>
+          </div>
+          <div class="learn-tip-card">
+            <span class="learn-tip-icon">🛒</span>
+            <h4>Shop Smart</h4>
+            <p>Learn which components you need by watching design videos, then order them directly from our shop.</p>
+          </div>
+          <div class="learn-tip-card">
+            <span class="learn-tip-icon">🧠</span>
+            <h4>Learn & Build</h4>
+            <p>Follow along with tutorials using the components you've ordered. Our team can guide your project too.</p>
+          </div>
+        </div>
+
+      </section>
+
+    </main>
+  </div>
+
+  <!-- CART SIDEBAR -->
+  <div class="cart-overlay" id="cart-overlay"></div>
+  <aside class="cart-drawer" id="cart-drawer">
+    <div class="cart-drawer-header">
+      <h3>🛒 Your Cart</h3>
+      <button class="cart-close-btn" id="cart-close-btn">✕</button>
+    </div>
+    <div class="cart-items" id="cart-items"></div>
+    <div class="cart-footer">
+      <div class="cart-total-row">
+        <span>Total</span>
+        <span class="cart-total-price" id="cart-total-price">₹0</span>
+      </div>
+      <button class="btn-checkout" id="btn-checkout">Place Order 🚀</button>
+    </div>
+  </aside>
+
+  <!-- ORDER SUCCESS TOAST -->
+  <div class="order-toast hidden" id="order-toast">
+    <span class="toast-icon">✅</span>
+    <div>
+      <strong>Order Placed!</strong>
+      <p id="order-toast-msg">Your order has been submitted successfully.</p>
+    </div>
+  </div>
+
+  <script src="auth.js"></script>
+  <script src="shop.js"></script>
+  <script src="electronics_dashboard.js"></script>
+</body>
+</html>
