@@ -58,17 +58,24 @@
   async function fetchServerData() {
     try {
       const [oRes, bRes] = await Promise.all([
-        fetch('/api/orders').catch(() => ({ ok: false })),
-        fetch('/api/bookings').catch(() => ({ ok: false }))
+        fetch('/api/orders').catch(() => null),
+        fetch('/api/bookings').catch(() => null)
       ]);
-      if (oRes.ok) {
-        const oData = await oRes.json();
-        if (oData.ok) serverOrders = oData.orders;
+      
+      if (oRes && oRes.ok) {
+        try {
+          const oData = await oRes.json();
+          if (oData.ok) serverOrders = oData.orders;
+        } catch(e) { console.warn('Orders JSON error (Did you restart the backend?)'); }
       }
-      if (bRes.ok) {
-        const bData = await bRes.json();
-        if (bData.ok) serverBookings = bData.bookings;
+      
+      if (bRes && bRes.ok) {
+        try {
+          const bData = await bRes.json();
+          if (bData.ok) serverBookings = bData.bookings;
+        } catch(e) { console.warn('Bookings JSON error (Did you restart the backend?)'); }
       }
+      
       updateNotifBadge();
       const overviewTab = document.getElementById('tab-overview');
       if (overviewTab && overviewTab.classList.contains('active')) renderOverview();
@@ -77,7 +84,7 @@
       const bookingsTab = document.getElementById('tab-bookings');
       if (bookingsTab && bookingsTab.classList.contains('active')) renderBookings();
     } catch (err) {
-      console.error(err);
+      console.error('Error in fetchServerData:', err);
     }
   }
 
@@ -163,24 +170,22 @@
   document.getElementById('toast-dismiss-btn').addEventListener('click', dismissToast);
 
   /* Cross-tab StorageEvent — fires when customer places order or products are changed */
-  window.addEventListener('storage', (e) => {
+  window.addEventListener('storage', async (e) => {
     if (e.key === 'inf_last_order' && e.newValue) {
+      await fetchServerData();
       try {
         const data = JSON.parse(e.newValue);
-        updateNotifBadge();
         showOwnerToast(`New Order from ${data.customerName || 'a customer'}!`, 
           data.summary ? `${data.summary} (₹${data.total})` : 'Check the Orders tab.');
-        renderOverview();
       } catch (err) {}
       // Auto-dismiss after 6s
       setTimeout(dismissToast, 6000);
     } else if (e.key === 'inf_last_booking' && e.newValue) {
+      await fetchServerData();
       try {
         const data = JSON.parse(e.newValue);
-        updateNotifBadge();
         showOwnerToast(`New Project from ${data.customerName || 'a customer'}!`, 
           data.title ? `Type: ${data.type} - ${data.title}` : 'Check the Bookings tab.');
-        renderBookings();
       } catch (err) {}
       setTimeout(dismissToast, 6000);
     } else if (e.key === 'inf_products') {
