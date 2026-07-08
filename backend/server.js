@@ -17,8 +17,10 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Serve static files from the frontend directory
-app.use(express.static(path.join(__dirname, '../frontend')));
+// Serve static files from the frontend directory locally
+if (process.env.VERCEL !== '1') {
+  app.use(express.static(path.join(__dirname, '../frontend')));
+}
 
 // Connect to MongoDB
 mongoose.connect(MONGO_URI)
@@ -172,10 +174,12 @@ app.put('/api/bookings/:id/status', async (req, res) => {
   }
 });
 
-// Fallback to index.html for unknown routes (SPA like behavior)
-app.use((req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend', 'index.html'));
-});
+// Fallback to index.html locally
+if (process.env.VERCEL !== '1') {
+  app.use((req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend', 'index.html'));
+  });
+}
 
 // Start Server
 if (process.env.VERCEL !== '1') {
