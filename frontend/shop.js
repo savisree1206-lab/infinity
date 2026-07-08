@@ -142,7 +142,7 @@ const ShopManager = (() => {
     localStorage.setItem(ORDERS_KEY, JSON.stringify(orders));
   }
 
-  function placeOrder(user) {
+  async function placeOrder(user) {
     const cart = getCart();
     if (cart.length === 0) return { ok: false, error: 'Cart is empty.' };
 
@@ -170,6 +170,16 @@ const ShopManager = (() => {
     orders.unshift(order);
     saveOrders(orders);
     clearCart();
+
+    try {
+      await fetch('/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(order)
+      });
+    } catch (e) {
+      console.error('Failed to post order to backend', e);
+    }
 
     // Trigger storage event for owner page notification
     const summary = items.map(i => `${i.qty}x ${i.name}`).join(', ');

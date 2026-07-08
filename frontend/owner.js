@@ -51,6 +51,39 @@
   document.getElementById('nav-signout-btn').addEventListener('click', () => AuthManager.signOut());
   document.getElementById('profile-signout-btn').addEventListener('click', () => AuthManager.signOut());
 
+  /* ========= BACKEND POLLING ========= */
+  let serverOrders = [];
+  let serverBookings = [];
+
+  async function fetchServerData() {
+    try {
+      const [oRes, bRes] = await Promise.all([
+        fetch('/api/orders').catch(() => ({ ok: false })),
+        fetch('/api/bookings').catch(() => ({ ok: false }))
+      ]);
+      if (oRes.ok) {
+        const oData = await oRes.json();
+        if (oData.ok) serverOrders = oData.orders;
+      }
+      if (bRes.ok) {
+        const bData = await bRes.json();
+        if (bData.ok) serverBookings = bData.bookings;
+      }
+      updateNotifBadge();
+      const overviewTab = document.getElementById('tab-overview');
+      if (overviewTab && overviewTab.classList.contains('active')) renderOverview();
+      const ordersTab = document.getElementById('tab-orders');
+      if (ordersTab && ordersTab.classList.contains('active')) renderAllOrders();
+      const bookingsTab = document.getElementById('tab-bookings');
+      if (bookingsTab && bookingsTab.classList.contains('active')) renderBookings();
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  setInterval(fetchServerData, 5000);
+  fetchServerData();
+
   /* ========= TAB SYSTEM ========= */
   const tabs        = document.querySelectorAll('.portal-tab');
   const sidebarItems = document.querySelectorAll('.sidebar-item');
@@ -76,15 +109,11 @@
 
   /* ========= NOTIFICATION SYSTEM ========= */
   function getNewBookingCount() {
-    try {
-      const elec = JSON.parse(localStorage.getItem('inf_bookings')) || [];
-      const webdev = JSON.parse(localStorage.getItem('inf_webdev_bookings')) || [];
-      return [...elec, ...webdev].filter(b => b.status === 'Pending Review' || b.status === 'Under Review').length;
-    } catch { return 0; }
+    return serverBookings.filter(b => b.status === 'Pending Review' || b.status === 'Under Review').length;
   }
 
   function updateNotifBadge() {
-    const orderCount = ShopManager.getNewOrderCount();
+    const orderCount = serverOrders.filter(o => o.isNewOrder).length;
     const bookingCount = getNewBookingCount();
     const totalCount = orderCount + bookingCount;
 
@@ -164,16 +193,19 @@
   document.getElementById('notif-bell').addEventListener('click', () => {
     showTab('orders');
     // Mark all as seen
-    const orders = ShopManager.getOrders();
-    orders.forEach(o => ShopManager.markOrderSeen(o.id));
-    updateNotifBadge();
+    serverOrders.forEach(async o => {
+      if (o.isNewOrder) {
+        await fetch(`/api/orders/${o.id}/seen`, { method: 'PUT' });
+      }
+    });
+    fetchServerData();
   });
 
   /* ========= OVERVIEW ========= */
   function renderOverview() {
-    const orders = ShopManager.getOrders();
+    const orders = serverOrders;
     const total     = orders.length;
-    const newCount  = orders.filter(o => o.isNew).length;
+    const newCount  = orders.filter(o => o.isNewOrder).length;
     const fulfilled = orders.filter(o => o.status === 'Fulfilled').length;
     const revenue   = orders.reduce((s, o) => s + o.total, 0);
 
@@ -209,8 +241,8 @@
         </thead>
         <tbody>
           ${orders.map(o => `
-            <tr class="order-row ${o.isNew ? 'new-order-row' : ''}" data-id="${o.id}">
-              <td><span class="order-id-cell">${o.id}${o.isNew ? ' <span class="new-dot">NEW</span>' : ''}</span></td>
+            <tr class="order-row ${o.isNewOrder ? 'new-order-row' : ''}" data-id="${o.id}">
+              <td><span class="order-id-cell">${o.id}${o.isNewOrder ? ' <span class="new-dot">NEW</span>' : ''}</span></td>
               <td>
                 <div class="customer-cell">
                   <div class="cust-avatar">${o.customerName.charAt(0).toUpperCase()}</div>
@@ -247,14 +279,18 @@
     // Status select change
     if (!compact) {
       container.querySelectorAll('.status-select').forEach(sel => {
-        sel.addEventListener('change', () => {
-          ShopManager.updateOrderStatus(sel.dataset.id, sel.value);
-          renderAllOrders();
-          renderOverview();
-          updateNotifBadge();
-          // Flash the row
-          const row = sel.closest('tr');
-          if (row) { row.classList.add('row-flash'); setTimeout(() => row.classList.remove('row-flash'), 600); }
+        sel.addEventListener('change', async () => {
+          try {
+            await fetch(`/api/orders/${sel.dataset.id}/status`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ status: sel.value })
+            });
+            fetchServerData();
+            // Flash the row
+            const row = sel.closest('tr');
+            if (row) { row.classList.add('row-flash'); setTimeout(() => row.classList.remove('row-flash'), 600); }
+          } catch (e) {}
         });
       });
     }
@@ -263,7 +299,7 @@
   /* ========= ALL ORDERS TAB ========= */
   function renderAllOrders() {
     const filter = document.getElementById('order-status-filter').value;
-    let orders = ShopManager.getOrders();
+    let orders = serverOrders;
     if (filter !== 'All') orders = orders.filter(o => o.status === filter);
     renderOrdersTable('all-orders-table', orders, false);
     updateNotifBadge();
@@ -276,16 +312,7 @@
     const container = document.getElementById('all-bookings-table');
     if (!container) return;
 
-    let elec = [];
-    let webdev = [];
-    try { elec = JSON.parse(localStorage.getItem('inf_bookings')) || []; } catch (e) {}
-    try { webdev = JSON.parse(localStorage.getItem('inf_webdev_bookings')) || []; } catch (e) {}
-
-    // Add source tag
-    elec = elec.map(b => ({ ...b, _source: 'Electronics' }));
-    webdev = webdev.map(b => ({ ...b, _source: 'Web Dev' }));
-
-    const bookings = [...elec, ...webdev].sort((a, b) => new Date(b.date) - new Date(a.date));
+    const bookings = serverBookings;
 
     if (bookings.length === 0) {
       container.innerHTML = '<div class="empty-state"><span>💼</span><p>No service bookings yet.</p></div>';
@@ -309,7 +336,7 @@
             <tr class="order-row">
               <td>
                 <span class="order-id-cell">${b.id}</span>
-                <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 4px;">${b._source}</div>
+                <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 4px;">${b.source}</div>
               </td>
               <td>
                 <div class="customer-cell">
@@ -324,7 +351,7 @@
               <td class="date-cell">${new Date(b.date).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' })}</td>
               <td><span class="order-status-badge">${b.status}</span></td>
               <td>
-                <select class="booking-status-select portal-select" data-id="${b.id}" data-source="${b._source}" style="max-width:120px;">
+                <select class="booking-status-select portal-select" data-id="${b.id}" data-source="${b.source}" style="max-width:120px;">
                   <option value="${b.status}" selected disabled>${b.status}</option>
                   <option value="In Progress">In Progress</option>
                   <option value="Completed">Completed</option>
@@ -344,17 +371,15 @@
     });
   }
 
-  function updateBookingStatus(id, source, newStatus) {
-    const key = source === 'Electronics' ? 'inf_bookings' : 'inf_webdev_bookings';
-    let list = [];
-    try { list = JSON.parse(localStorage.getItem(key)) || []; } catch (e) {}
-    const item = list.find(b => b.id === id);
-    if (item) {
-      item.status = newStatus;
-      localStorage.setItem(key, JSON.stringify(list));
-      renderBookings();
-      updateNotifBadge();
-    }
+  async function updateBookingStatus(id, source, newStatus) {
+    try {
+      await fetch(`/api/bookings/${id}/status`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus })
+      });
+      fetchServerData();
+    } catch (e) { console.error(e); }
   }
 
   /* ========= PRODUCT MODAL SYSTEM ========= */

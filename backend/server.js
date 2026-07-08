@@ -5,6 +5,8 @@ const cors = require('cors');
 const path = require('path');
 const bcrypt = require('bcryptjs');
 const User = require('./models/User');
+const Order = require('./models/Order');
+const Booking = require('./models/Booking');
 
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -82,6 +84,91 @@ app.post('/api/auth/login', async (req, res) => {
   } catch (err) {
     console.error('Login error:', err);
     res.status(500).json({ ok: false, error: 'Server error during login.' });
+  }
+});
+
+app.get('/api/orders', async (req, res) => {
+  try {
+    const orders = await Order.find().sort({ placedAt: -1 });
+    res.json({ ok: true, orders });
+  } catch (err) {
+    res.status(500).json({ ok: false, error: 'Server error fetching orders.' });
+  }
+});
+
+app.post('/api/orders', async (req, res) => {
+  try {
+    const orderData = req.body;
+    const order = new Order(orderData);
+    await order.save();
+    res.json({ ok: true, order });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ ok: false, error: 'Server error creating order.' });
+  }
+});
+
+app.put('/api/orders/:id/status', async (req, res) => {
+  try {
+    const { status } = req.body;
+    const order = await Order.findOneAndUpdate(
+      { id: req.params.id }, 
+      { status, updatedAt: Date.now(), isNewOrder: false }, 
+      { new: true }
+    );
+    if (!order) return res.status(404).json({ ok: false, error: 'Order not found.' });
+    res.json({ ok: true, order });
+  } catch (err) {
+    res.status(500).json({ ok: false, error: 'Server error updating order.' });
+  }
+});
+
+app.put('/api/orders/:id/seen', async (req, res) => {
+  try {
+    const order = await Order.findOneAndUpdate(
+      { id: req.params.id }, 
+      { isNewOrder: false }, 
+      { new: true }
+    );
+    res.json({ ok: true, order });
+  } catch (err) {
+    res.status(500).json({ ok: false, error: 'Server error updating order.' });
+  }
+});
+
+app.get('/api/bookings', async (req, res) => {
+  try {
+    const bookings = await Booking.find().sort({ date: -1 });
+    res.json({ ok: true, bookings });
+  } catch (err) {
+    res.status(500).json({ ok: false, error: 'Server error fetching bookings.' });
+  }
+});
+
+app.post('/api/bookings', async (req, res) => {
+  try {
+    const bookingData = req.body;
+    const booking = new Booking(bookingData);
+    await booking.save();
+    res.json({ ok: true, booking });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ ok: false, error: 'Server error creating booking.' });
+  }
+});
+
+app.put('/api/bookings/:id/status', async (req, res) => {
+  try {
+    const { status } = req.body;
+    const booking = await Booking.findOneAndUpdate(
+      { id: req.params.id }, 
+      { status }, 
+      { new: true }
+    );
+    if (!booking) return res.status(404).json({ ok: false, error: 'Booking not found.' });
+    res.json({ ok: true, booking });
+  } catch (err) {
+    res.status(500).json({ ok: false, error: 'Server error updating booking.' });
   }
 });
 

@@ -92,6 +92,14 @@
     const list = getBookings();
     list.unshift(booking);
     localStorage.setItem(BOOKINGS_KEY, JSON.stringify(list));
+
+    booking.source = 'Web Dev';
+    fetch('/api/bookings', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(booking)
+    }).catch(e => console.error(e));
+
     localStorage.setItem('inf_last_booking', JSON.stringify({ 
       id: booking.id, 
       customerName: booking.customerName,

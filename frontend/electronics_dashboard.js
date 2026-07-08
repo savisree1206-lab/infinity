@@ -125,6 +125,14 @@
     const bookings = getBookings();
     bookings.unshift(booking);
     localStorage.setItem('inf_bookings', JSON.stringify(bookings));
+
+    booking.source = 'Electronics';
+    fetch('/api/bookings', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(booking)
+    }).catch(e => console.error(e));
+
     localStorage.setItem('inf_last_booking', JSON.stringify({ 
       id: booking.id, 
       customerName: booking.customerName,
@@ -330,8 +338,8 @@
     updateCartBadge();
   };
 
-  document.getElementById('btn-checkout').addEventListener('click', () => {
-    const res = ShopManager.placeOrder(user);
+  document.getElementById('btn-checkout').addEventListener('click', async () => {
+    const res = await ShopManager.placeOrder(user);
     if (res.ok) {
       closeCart();
       updateCartBadge();
