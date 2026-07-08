@@ -105,7 +105,7 @@
       <div class="product-card" id="pc-${p.id}">
         <div class="product-image-wrap">
           <img src="${p.imageUrl || ''}" alt="${p.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
-          <div class="product-img-fallback" style="display: flex;">${p.icon}</div>
+          <div class="product-img-fallback">${p.icon}</div>
           <span class="product-cat-tag">${p.category}</span>
         </div>
         <div class="product-body">

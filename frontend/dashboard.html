@@ -144,7 +144,11 @@
       <ul class="nav-links">
         <li><a href="index.html">Home</a></li>
       </ul>
-      <div class="nav-auth-btns">
+      <div class="nav-auth-btns" style="display: flex; align-items: center;">
+        <div class="cart-trigger" id="cart-trigger-btn" title="View Cart" style="cursor: pointer; margin-right: 20px; position: relative;">
+          <span class="cart-icon" style="font-size: 1.4rem;">🛒</span>
+          <span class="cart-badge" id="cart-badge" style="position: absolute; top: -5px; right: -8px; background: var(--accent); color: #000; border-radius: 50%; font-size: 0.7rem; font-weight: 700; padding: 2px 6px; min-width: 15px; text-align: center; display: none;">0</span>
+        </div>
         <span id="user-greeting" style="margin-right:20px; font-weight:600; color:var(--text-main);"></span>
         <button class="nav-signin-btn" id="nav-signout-btn">Sign Out</button>
       </div>
@@ -267,9 +271,51 @@
       </div>
 
     </div>
+
+    <hr class="dashboard-divider" style="border: 0; height: 1px; background: linear-gradient(to right, transparent, rgba(255,255,255,0.1), transparent); margin: 60px 0;" />
+
+    <div class="shop-section" style="max-width: 1200px; margin: 0 auto; text-align: left;">
+      <div class="tab-header" style="margin-bottom: 2rem;">
+        <h2 class="tab-title" style="font-size: 2rem;">⚡ Components <span class="gradient-text">Shop</span></h2>
+        <p class="tab-subtitle" style="font-size: 0.95rem;">Browse and purchase electrical components directly from your dashboard.</p>
+      </div>
+
+      <div class="category-filter" id="category-filter" style="margin-bottom: 1.5rem; display: flex; gap: 0.5rem; flex-wrap: wrap;"></div>
+      <div class="search-bar-wrap" style="margin-bottom: 2rem;">
+        <input type="search" id="product-search" placeholder="🔍  Search components..." class="product-search" style="width: 100%; max-width: 100%;" />
+      </div>
+      <div class="product-grid" id="product-grid"></div>
+    </div>
   </main>
 
+  <!-- CART SIDEBAR -->
+  <div class="cart-overlay" id="cart-overlay"></div>
+  <aside class="cart-drawer" id="cart-drawer">
+    <div class="cart-drawer-header">
+      <h3>🛒 Your Cart</h3>
+      <button class="cart-close-btn" id="cart-close-btn">✕</button>
+    </div>
+    <div class="cart-items" id="cart-items"></div>
+    <div class="cart-footer">
+      <div class="cart-total-row">
+        <span>Total</span>
+        <span class="cart-total-price" id="cart-total-price">₹0</span>
+      </div>
+      <button class="btn-checkout" id="btn-checkout">Place Order 🚀</button>
+    </div>
+  </aside>
+
+  <!-- ORDER SUCCESS TOAST -->
+  <div class="order-toast hidden" id="order-toast">
+    <span class="toast-icon">✅</span>
+    <div>
+      <strong>Order Placed!</strong>
+      <p id="order-toast-msg">Your order has been submitted successfully.</p>
+    </div>
+  </div>
+
   <script src="auth.js"></script>
+  <script src="shop.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       // Need a simple check. If no user, redirect to index
@@ -284,6 +330,197 @@
       
       document.getElementById('nav-signout-btn').addEventListener('click', () => {
         AuthManager.signOut();
+      });
+
+      // --- Components Shop logic ---
+      const cartOverlay = document.getElementById('cart-overlay');
+      const cartDrawer = document.getElementById('cart-drawer');
+      const cartTriggerBtn = document.getElementById('cart-trigger-btn');
+      const cartCloseBtn = document.getElementById('cart-close-btn');
+      const btnCheckout = document.getElementById('btn-checkout');
+      const cartItems = document.getElementById('cart-items');
+      const cartTotalPrice = document.getElementById('cart-total-price');
+      const cartBadge = document.getElementById('cart-badge');
+      const orderToast = document.getElementById('order-toast');
+
+      let currentCategory = 'All';
+      let searchQuery = '';
+
+      function closeCart() {
+        cartOverlay.classList.remove('open');
+        cartDrawer.classList.remove('open');
+      }
+
+      if (cartTriggerBtn) {
+        cartTriggerBtn.addEventListener('click', () => {
+          renderCart();
+          cartOverlay.classList.add('open');
+          cartDrawer.classList.add('open');
+        });
+      }
+      if (cartCloseBtn) cartCloseBtn.addEventListener('click', closeCart);
+      if (cartOverlay) cartOverlay.addEventListener('click', closeCart);
+
+      function updateCartBadge() {
+        const count = ShopManager.getCartCount();
+        cartBadge.textContent = count;
+        cartBadge.style.display = count > 0 ? 'flex' : 'none';
+      }
+
+      function renderCart() {
+        const cart = ShopManager.getCart();
+        
+        if (cart.length === 0) {
+          cartItems.innerHTML = '<div class="empty-state" style="margin-top: 50px;"><span>🛒</span><p>Your cart is empty.</p></div>';
+          cartTotalPrice.textContent = '₹0';
+          btnCheckout.disabled = true;
+          return;
+        }
+
+        btnCheckout.disabled = false;
+        cartTotalPrice.textContent = '₹' + ShopManager.getCartTotal();
+
+        cartItems.innerHTML = cart.map(item => {
+          const p = ShopManager.getProductById(item.productId);
+          if(!p) return '';
+          return `
+            <div class="cart-item">
+              <div class="cart-item-img">
+                <img src="${p.imageUrl}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                <div class="product-img-fallback" style="font-size: 1.5rem;">${p.icon}</div>
+              </div>
+              <div class="cart-item-info">
+                <div class="cart-item-name">${p.name}</div>
+                <div class="cart-item-price">₹${p.price}</div>
+              </div>
+              <div class="cart-qty-controls">
+                <button class="qty-btn" onclick="updateCart('${p.id}', ${item.qty - 1})">-</button>
+                <span class="qty-val">${item.qty}</span>
+                <button class="qty-btn" onclick="updateCart('${p.id}', ${item.qty + 1})">+</button>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      window.updateCart = (productId, qty) => {
+        ShopManager.updateCartQty(productId, qty);
+        renderCart();
+        updateCartBadge();
+      };
+
+      if (btnCheckout) {
+        btnCheckout.addEventListener('click', () => {
+          const res = ShopManager.placeOrder(user);
+          if (res.ok) {
+            closeCart();
+            updateCartBadge();
+            
+            orderToast.classList.remove('hidden');
+            orderToast.classList.add('show');
+            setTimeout(() => {
+              orderToast.classList.remove('show');
+              setTimeout(() => orderToast.classList.add('hidden'), 400);
+            }, 4000);
+          }
+        });
+      }
+
+      // Shop Product rendering
+      function renderCategories() {
+        const catFilter = document.getElementById('category-filter');
+        if (!catFilter) return;
+        const products = ShopManager.getProducts();
+        const categories = ['All', ...new Set(products.map(p => p.category))];
+        
+        catFilter.innerHTML = categories.map(cat => `
+          <button class="cat-btn ${cat === currentCategory ? 'active' : ''}" data-category="${cat}">${cat}</button>
+        `).join('');
+
+        catFilter.querySelectorAll('.cat-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            currentCategory = e.target.dataset.category;
+            catFilter.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+            e.target.classList.add('active');
+            renderProducts();
+          });
+        });
+      }
+
+      function renderProducts() {
+        const grid = document.getElementById('product-grid');
+        if (!grid) return;
+        let products = ShopManager.getProducts();
+        
+        if (currentCategory !== 'All') {
+          products = products.filter(p => p.category === currentCategory);
+        }
+        if (searchQuery) {
+          products = products.filter(p => p.name.toLowerCase().includes(searchQuery) || p.desc.toLowerCase().includes(searchQuery));
+        }
+
+        if (products.length === 0) {
+          grid.innerHTML = '<div style="grid-column: 1/-1; text-align:center; padding: 40px; color: var(--text-muted);">No components found.</div>';
+          return;
+        }
+
+        grid.innerHTML = products.map(p => `
+          <div class="product-card">
+            <div class="product-image-wrap">
+              <img src="${p.imageUrl}" alt="${p.name}"
+                onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+              <div class="product-img-fallback">${p.icon}</div>
+              <span class="product-cat-tag">${p.category}</span>
+            </div>
+            <div class="product-body">
+              <h4 class="product-name">${p.name}</h4>
+              <p class="product-desc">${p.desc}</p>
+              <div class="product-price-row">
+                <span class="product-price">₹${p.price}</span>
+                <span class="product-unit">${p.unit}</span>
+              </div>
+              <button class="add-to-cart-btn" data-id="${p.id}" ${p.stock === 0 ? 'disabled' : ''}>
+                ${p.stock === 0 ? 'Out of Stock' : '🛒 Add to Cart'}
+              </button>
+            </div>
+          </div>
+        `).join('');
+
+        grid.querySelectorAll('.add-to-cart-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const id = e.target.dataset.id;
+            const res = ShopManager.addToCart(id, 1);
+            if (res.ok) {
+              updateCartBadge();
+              renderCart();
+              cartOverlay.classList.add('open');
+              cartDrawer.classList.add('open');
+            }
+          });
+        });
+      }
+
+      const searchInput = document.getElementById('product-search');
+      if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+          searchQuery = e.target.value.toLowerCase();
+          renderProducts();
+        });
+      }
+
+      // Initial Render
+      renderCategories();
+      renderProducts();
+      updateCartBadge();
+
+      // Listen for changes from other tabs
+      window.addEventListener('storage', (e) => {
+        if (e.key === 'inf_products') {
+          renderCategories();
+          renderProducts();
+          updateCartBadge();
+          renderCart();
+        }
       });
     });
   </script>

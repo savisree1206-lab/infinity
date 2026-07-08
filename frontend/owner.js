@@ -396,7 +396,7 @@
       <div class="product-card owner-product-card">
         <div class="product-image-wrap">
           <img src="${p.imageUrl || ''}" alt="${p.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
-          <div class="product-img-fallback" style="display: flex;">${p.icon}</div>
+          <div class="product-img-fallback">${p.icon}</div>
           <span class="product-cat-tag">${p.category}</span>
         </div>
         <div class="product-body" style="display: flex; flex-direction: column; height: 100%; flex: 1;">

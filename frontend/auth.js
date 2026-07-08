@@ -21,10 +21,14 @@ const AuthManager = (() => {
     localStorage.removeItem(SESSION_KEY);
   }
 
+  // API configuration - Change this to your deployed backend URL in production
+  // (e.g., 'https://infinity-backend.onrender.com') when deploying the frontend and backend separately.
+  const API_BASE = 'http://localhost:8080';
+
   /* ------ Sign Up (Async) ------ */
   async function signUp({ name, email, password, role }) {
     try {
-      const res = await fetch('http://localhost:8080/api/auth/signup', {
+      const res = await fetch(`${API_BASE}/api/auth/signup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, password, role })
@@ -40,7 +44,7 @@ const AuthManager = (() => {
   /* ------ Sign In (Async) ------ */
   async function signIn({ email, password }) {
     try {
-      const res = await fetch('http://localhost:8080/api/auth/login', {
+      const res = await fetch(`${API_BASE}/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
