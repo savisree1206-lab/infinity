@@ -61,6 +61,11 @@
           <span class="sidebar-icon">⚡</span>
           <span>Products</span>
         </button>
+        <button class="sidebar-item" data-tab="bookings" id="sidebar-bookings">
+          <span class="sidebar-icon">💼</span>
+          <span>Bookings</span>
+          <span class="sidebar-badge hidden" id="sidebar-booking-badge">0</span>
+        </button>
         <button class="sidebar-item" data-tab="profile" id="sidebar-profile">
           <span class="sidebar-icon">👤</span>
           <span>Profile</span>
@@ -136,6 +141,15 @@
           </div>
         </div>
         <div id="all-orders-table"></div>
+      </section>
+
+      <!-- ======= BOOKINGS TAB ======= -->
+      <section class="portal-tab" id="tab-bookings">
+        <div class="tab-header">
+          <h1 class="tab-title">💼 Service <span class="gradient-text">Bookings</span></h1>
+          <p class="tab-subtitle">Manage Web Development and Electronics Service Bookings.</p>
+        </div>
+        <div id="all-bookings-table"></div>
       </section>
 
       <!-- ======= PRODUCTS TAB ======= -->

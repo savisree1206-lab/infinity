@@ -125,6 +125,7 @@
     const bookings = getBookings();
     bookings.unshift(booking);
     localStorage.setItem('inf_bookings', JSON.stringify(bookings));
+    localStorage.setItem('inf_last_booking', JSON.stringify({ id: booking.id, ts: Date.now() }));
   }
 
   const bookingForm = document.getElementById('service-booking-form');

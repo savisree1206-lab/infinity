@@ -65,6 +65,7 @@
     if (tabId === 'orders')   renderAllOrders();
     if (tabId === 'overview') renderOverview();
     if (tabId === 'products') renderOwnerProducts();
+    if (tabId === 'bookings') renderBookings();
   }
 
   sidebarItems.forEach(item => {
@@ -74,18 +75,44 @@
   document.getElementById('view-all-orders-btn')?.addEventListener('click', () => showTab('orders'));
 
   /* ========= NOTIFICATION SYSTEM ========= */
+  function getNewBookingCount() {
+    try {
+      const elec = JSON.parse(localStorage.getItem('inf_bookings')) || [];
+      const webdev = JSON.parse(localStorage.getItem('inf_webdev_bookings')) || [];
+      return [...elec, ...webdev].filter(b => b.status === 'Pending Review' || b.status === 'Under Review').length;
+    } catch { return 0; }
+  }
+
   function updateNotifBadge() {
-    const count = ShopManager.getNewOrderCount();
+    const orderCount = ShopManager.getNewOrderCount();
+    const bookingCount = getNewBookingCount();
+    const totalCount = orderCount + bookingCount;
+
     const badge = document.getElementById('notif-badge');
-    const sidebarBadge = document.getElementById('sidebar-order-badge');
-    if (count > 0) {
-      badge.textContent = count;
+    const sidebarOrderBadge = document.getElementById('sidebar-order-badge');
+    const sidebarBookingBadge = document.getElementById('sidebar-booking-badge');
+
+    if (totalCount > 0) {
+      badge.textContent = totalCount;
       badge.classList.remove('hidden');
-      sidebarBadge.textContent = count;
-      sidebarBadge.classList.remove('hidden');
     } else {
       badge.classList.add('hidden');
-      sidebarBadge.classList.add('hidden');
+    }
+
+    if (orderCount > 0) {
+      sidebarOrderBadge.textContent = orderCount;
+      sidebarOrderBadge.classList.remove('hidden');
+    } else {
+      sidebarOrderBadge.classList.add('hidden');
+    }
+
+    if (sidebarBookingBadge) {
+      if (bookingCount > 0) {
+        sidebarBookingBadge.textContent = bookingCount;
+        sidebarBookingBadge.classList.remove('hidden');
+      } else {
+        sidebarBookingBadge.classList.add('hidden');
+      }
     }
   }
 
@@ -111,6 +138,11 @@
       showOwnerToast('A customer just placed a new order! Check the Orders tab.');
       renderOverview();
       // Auto-dismiss after 6s
+      setTimeout(dismissToast, 6000);
+    } else if (e.key === 'inf_last_booking' && e.newValue) {
+      updateNotifBadge();
+      showOwnerToast('A customer just placed a new service booking! Check the Bookings tab.');
+      renderBookings();
       setTimeout(dismissToast, 6000);
     } else if (e.key === 'inf_products') {
       renderOwnerProducts();
@@ -178,7 +210,12 @@
                   </div>
                 </div>
               </td>
-              <td><span class="item-count-badge">${o.items.length} item${o.items.length > 1 ? 's' : ''}</span></td>
+              <td>
+                <span class="item-count-badge">${o.items.length} item${o.items.length > 1 ? 's' : ''}</span>
+                <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 4px;">
+                  ${o.items.map(i => `${i.qty}x ${i.name}`).join('<br>')}
+                </div>
+              </td>
               <td><strong>₹${o.total}</strong></td>
               <td class="date-cell">${new Date(o.placedAt).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' })}</td>
               <td><span class="order-status-badge status-${o.status.toLowerCase()}">${o.status}</span></td>
@@ -223,6 +260,92 @@
   }
 
   document.getElementById('order-status-filter').addEventListener('change', renderAllOrders);
+
+  /* ========= BOOKINGS TAB ========= */
+  function renderBookings() {
+    const container = document.getElementById('all-bookings-table');
+    if (!container) return;
+
+    let elec = [];
+    let webdev = [];
+    try { elec = JSON.parse(localStorage.getItem('inf_bookings')) || []; } catch (e) {}
+    try { webdev = JSON.parse(localStorage.getItem('inf_webdev_bookings')) || []; } catch (e) {}
+
+    // Add source tag
+    elec = elec.map(b => ({ ...b, _source: 'Electronics' }));
+    webdev = webdev.map(b => ({ ...b, _source: 'Web Dev' }));
+
+    const bookings = [...elec, ...webdev].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    if (bookings.length === 0) {
+      container.innerHTML = '<div class="empty-state"><span>💼</span><p>No service bookings yet.</p></div>';
+      return;
+    }
+
+    container.innerHTML = `
+      <table class="orders-table">
+        <thead>
+          <tr>
+            <th>Booking ID / Source</th>
+            <th>Customer</th>
+            <th>Type / Title</th>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${bookings.map(b => `
+            <tr class="order-row">
+              <td>
+                <span class="order-id-cell">${b.id}</span>
+                <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 4px;">${b._source}</div>
+              </td>
+              <td>
+                <div class="customer-cell">
+                  <div class="cust-avatar">${b.customerName.charAt(0).toUpperCase()}</div>
+                  <div class="cust-name">${b.customerName}</div>
+                </div>
+              </td>
+              <td>
+                <strong>${b.title}</strong>
+                <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 4px;">${b.type}</div>
+              </td>
+              <td class="date-cell">${new Date(b.date).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' })}</td>
+              <td><span class="order-status-badge">${b.status}</span></td>
+              <td>
+                <select class="booking-status-select portal-select" data-id="${b.id}" data-source="${b._source}" style="max-width:120px;">
+                  <option value="${b.status}" selected disabled>${b.status}</option>
+                  <option value="In Progress">In Progress</option>
+                  <option value="Completed">Completed</option>
+                  <option value="On Hold">On Hold</option>
+                </select>
+              </td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    `;
+
+    container.querySelectorAll('.booking-status-select').forEach(sel => {
+      sel.addEventListener('change', () => {
+        updateBookingStatus(sel.dataset.id, sel.dataset.source, sel.value);
+      });
+    });
+  }
+
+  function updateBookingStatus(id, source, newStatus) {
+    const key = source === 'Electronics' ? 'inf_bookings' : 'inf_webdev_bookings';
+    let list = [];
+    try { list = JSON.parse(localStorage.getItem(key)) || []; } catch (e) {}
+    const item = list.find(b => b.id === id);
+    if (item) {
+      item.status = newStatus;
+      localStorage.setItem(key, JSON.stringify(list));
+      renderBookings();
+      updateNotifBadge();
+    }
+  }
 
   /* ========= PRODUCT MODAL SYSTEM ========= */
   const productModal      = document.getElementById('product-modal');
