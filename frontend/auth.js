@@ -23,7 +23,7 @@ const AuthManager = (() => {
 
   // API configuration - Change this to your deployed backend URL in production
   // (e.g., 'https://infinity-backend.onrender.com') when deploying the frontend and backend separately.
-  const API_BASE = 'http://localhost:8080';
+  const API_BASE = 'https://infinity-845l.onrender.com';
 
   /* ------ Sign Up (Async) ------ */
   async function signUp({ name, email, password, role }) {
