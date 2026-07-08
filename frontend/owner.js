@@ -209,17 +209,23 @@
   /* ========= OVERVIEW ========= */
   function renderOverview() {
     const orders = serverOrders;
-    const total     = orders.length;
-    const newCount  = orders.filter(o => o.isNewOrder).length;
-    const fulfilled = orders.filter(o => o.status === 'Fulfilled').length;
-    const revenue   = orders.reduce((s, o) => s + o.total, 0);
+    const bookings = serverBookings;
+    
+    const totalOrders = orders.length;
+    const newOrders = orders.filter(o => o.isNewOrder).length;
+    const fulfilledOrders = orders.filter(o => o.status === 'Fulfilled').length;
+    const revenue = orders.reduce((s, o) => s + o.total, 0);
 
-    document.getElementById('stat-total-orders').textContent = total;
-    document.getElementById('stat-new-orders').textContent   = newCount;
-    document.getElementById('stat-fulfilled').textContent    = fulfilled;
-    document.getElementById('stat-revenue').textContent      = '₹' + revenue;
+    const totalBookings = bookings.length;
+    const newBookings = bookings.filter(b => b.status === 'Pending Review' || b.status === 'Under Review').length;
+    const fulfilledBookings = bookings.filter(b => b.status === 'Completed').length;
 
-    // Recent 5 orders
+    document.getElementById('stat-total-orders').textContent = totalOrders + totalBookings;
+    document.getElementById('stat-new-orders').textContent = newOrders + newBookings;
+    document.getElementById('stat-fulfilled').textContent = fulfilledOrders + fulfilledBookings;
+    document.getElementById('stat-revenue').textContent = `₹${revenue}`;
+
+    // Recent orders snippet (latest 5)
     const recent = orders.slice(0, 5);
     renderOrdersTable('recent-orders-table', recent, true);
   }
