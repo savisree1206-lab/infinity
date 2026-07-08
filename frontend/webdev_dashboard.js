@@ -92,7 +92,13 @@
     const list = getBookings();
     list.unshift(booking);
     localStorage.setItem(BOOKINGS_KEY, JSON.stringify(list));
-    localStorage.setItem('inf_last_booking', JSON.stringify({ id: booking.id, ts: Date.now() }));
+    localStorage.setItem('inf_last_booking', JSON.stringify({ 
+      id: booking.id, 
+      customerName: booking.customerName,
+      type: booking.type,
+      title: booking.title,
+      ts: Date.now() 
+    }));
   }
 
   const form = document.getElementById('webdev-booking-form');

@@ -116,8 +116,10 @@
     }
   }
 
-  function showOwnerToast(msg) {
+  function showOwnerToast(title, msg) {
     const toast = document.getElementById('owner-toast');
+    const strongEl = toast.querySelector('strong');
+    if (strongEl) strongEl.textContent = title;
     document.getElementById('owner-toast-msg').textContent = msg;
     toast.classList.remove('hidden');
     toast.classList.add('show');
@@ -134,15 +136,23 @@
   /* Cross-tab StorageEvent — fires when customer places order or products are changed */
   window.addEventListener('storage', (e) => {
     if (e.key === 'inf_last_order' && e.newValue) {
-      updateNotifBadge();
-      showOwnerToast('A customer just placed a new order! Check the Orders tab.');
-      renderOverview();
+      try {
+        const data = JSON.parse(e.newValue);
+        updateNotifBadge();
+        showOwnerToast(`New Order from ${data.customerName || 'a customer'}!`, 
+          data.summary ? `${data.summary} (₹${data.total})` : 'Check the Orders tab.');
+        renderOverview();
+      } catch (err) {}
       // Auto-dismiss after 6s
       setTimeout(dismissToast, 6000);
     } else if (e.key === 'inf_last_booking' && e.newValue) {
-      updateNotifBadge();
-      showOwnerToast('A customer just placed a new service booking! Check the Bookings tab.');
-      renderBookings();
+      try {
+        const data = JSON.parse(e.newValue);
+        updateNotifBadge();
+        showOwnerToast(`New Project from ${data.customerName || 'a customer'}!`, 
+          data.title ? `Type: ${data.type} - ${data.title}` : 'Check the Bookings tab.');
+        renderBookings();
+      } catch (err) {}
       setTimeout(dismissToast, 6000);
     } else if (e.key === 'inf_products') {
       renderOwnerProducts();

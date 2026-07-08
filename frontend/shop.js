@@ -172,7 +172,14 @@ const ShopManager = (() => {
     clearCart();
 
     // Trigger storage event for owner page notification
-    localStorage.setItem('inf_last_order', JSON.stringify({ orderId: order.id, ts: Date.now() }));
+    const summary = items.map(i => `${i.qty}x ${i.name}`).join(', ');
+    localStorage.setItem('inf_last_order', JSON.stringify({ 
+      orderId: order.id, 
+      customerName: order.customerName,
+      summary: summary,
+      total: order.total,
+      ts: Date.now() 
+    }));
 
     return { ok: true, order };
   }
