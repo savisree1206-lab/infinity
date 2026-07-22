@@ -245,8 +245,9 @@
     });
 
     /* ========= ORDERS TAB ========= */
-    function renderOrders() {
+    async function renderOrders() {
         const container = document.getElementById('orders-list');
+        await ShopManager.initOrders();
         const orders = ShopManager.getOrdersByCustomer(user.id);
 
         if (orders.length === 0) {
@@ -276,6 +277,7 @@
     /* ========= INIT ========= */
     (async function init() {
         await ShopManager.initProducts();
+        await ShopManager.initOrders();
         renderCategories();
         renderProducts();
         updateCartBadge();

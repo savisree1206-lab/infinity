@@ -202,7 +202,10 @@
         <p class="auth-modal-subtitle" id="product-modal-subtitle">Enter details to add a product to the catalog.</p>
         
         <form id="product-form" onsubmit="return false;">
-          <input type="hidden" id="product-id" />
+          <div class="auth-field">
+            <label for="product-id">Product Code (ID)</label>
+            <input type="text" id="product-id" placeholder="e.g. p001 or MCU-123" required />
+          </div>
           
           <div class="auth-field">
             <label for="product-name">Product Name</label>

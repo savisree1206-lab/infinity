@@ -93,6 +93,18 @@ const ShopManager = (() => {
     try { return JSON.parse(localStorage.getItem(ORDERS_KEY)) || []; }
     catch { return []; }
   }
+
+  async function initOrders() {
+    try {
+      const res = await fetch('/api/orders');
+      const data = await res.json();
+      if (data.ok && data.orders) {
+        saveOrders(data.orders);
+      }
+    } catch (e) {
+      console.error('Failed to fetch orders', e);
+    }
+  }
   function saveOrders(orders) {
     localStorage.setItem(ORDERS_KEY, JSON.stringify(orders));
   }
@@ -189,7 +201,7 @@ const ShopManager = (() => {
   /* ------ Product mutation helpers ------ */
   async function addProduct(product) {
     const newProduct = {
-      id: 'p-' + Date.now(),
+      id: product.id || 'p-' + Date.now(),
       name: product.name || '',
       category: product.category || '',
       price: Number(product.price) || 0,
@@ -265,7 +277,7 @@ const ShopManager = (() => {
   return {
     initProducts, getProducts, getProductById, getCategories,
     getCart, addToCart, removeFromCart, updateCartQty, clearCart, getCartTotal, getCartCount,
-    placeOrder, getOrders, getOrdersByCustomer, updateOrderStatus, markOrderSeen, getNewOrderCount,
+    placeOrder, initOrders, getOrders, getOrdersByCustomer, updateOrderStatus, markOrderSeen, getNewOrderCount,
     addProduct, updateProduct, deleteProduct
   };
 })();

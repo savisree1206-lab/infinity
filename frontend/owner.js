@@ -466,10 +466,12 @@
     if (removeBtn) removeBtn.style.display = 'none';
     
     if (mode === 'add') {
+      productForm.dataset.originalId = '';
       productModalTitle.innerHTML = '⚡ Add New <span class="gradient-text">Product</span>';
       document.getElementById('product-id').value = '';
       document.getElementById('product-modal-subtitle').textContent = 'Enter details to add a product to the catalog.';
     } else {
+      productForm.dataset.originalId = productId;
       productModalTitle.innerHTML = '⚡ Edit <span class="gradient-text">Product</span>';
       document.getElementById('product-id').value = productId;
       document.getElementById('product-modal-subtitle').textContent = 'Modify product details below.';
@@ -516,7 +518,8 @@
   if (productForm) {
     productForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const id = document.getElementById('product-id').value;
+      const originalId = productForm.dataset.originalId;
+      const id = document.getElementById('product-id').value.trim();
       const name = document.getElementById('product-name').value.trim();
       const category = document.getElementById('product-category').value.trim();
       const price = Number(document.getElementById('product-price').value);
@@ -525,7 +528,7 @@
       const desc = document.getElementById('product-desc').value.trim();
       const imageUrl = selectedImageBase64;
 
-      if (!name || !category || isNaN(price) || isNaN(stock) || !unit || !desc) {
+      if (!id || !name || !category || isNaN(price) || isNaN(stock) || !unit || !desc) {
         productFormErr.textContent = 'Please fill out all fields correctly.';
         return;
       }
@@ -535,13 +538,13 @@
         return;
       }
 
-      const existingProduct = id ? ShopManager.getProductById(id) : null;
+      const existingProduct = originalId ? ShopManager.getProductById(originalId) : null;
       const icon = existingProduct ? existingProduct.icon : '⚡';
 
-      const productData = { name, category, icon, price, stock, unit, desc, imageUrl };
+      const productData = { id, name, category, icon, price, stock, unit, desc, imageUrl };
       
-      if (id) {
-        const result = await ShopManager.updateProduct(id, productData);
+      if (originalId) {
+        const result = await ShopManager.updateProduct(originalId, productData);
         if (!result.ok) {
           productFormErr.textContent = result.error || 'Failed to update product.';
           return;
