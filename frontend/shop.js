@@ -11,68 +11,23 @@ const ShopManager = (() => {
   const ORDERS_KEY   = 'inf_orders';
   const CATALOG_VERSION = 4; // bump → force re-seed with local images
 
-  /* ------ Default Product Catalog ------ */
-  const DEFAULT_PRODUCTS = [
-    { id: 'p001', name: 'Resistor 10Ω Pack',        category: 'Passive',  price: 15,  stock: 100, unit: 'pack of 20', icon: '🟤',
-      imageUrl: 'images/components/resistors.png',
-      desc: 'General purpose carbon film resistors, ±5% tolerance' },
-    { id: 'p002', name: 'LED Red Pack',              category: 'LED',      price: 20,  stock: 150, unit: 'pack of 10', icon: '🔴',
-      imageUrl: 'images/components/led_pack.png',
-      desc: '5mm red LEDs, 20mA forward current, ultra-bright' },
-    { id: 'p003', name: 'LED Blue Pack',             category: 'LED',      price: 25,  stock: 120, unit: 'pack of 10', icon: '🔵',
-      imageUrl: 'images/components/led_pack.png',
-      desc: '5mm blue LEDs, 20mA forward current, ultra-bright' },
-    { id: 'p004', name: 'LED Green Pack',            category: 'LED',      price: 20,  stock: 130, unit: 'pack of 10', icon: '🟢',
-      imageUrl: 'images/components/led_pack.png',
-      desc: '5mm green LEDs, 20mA forward current, ultra-bright' },
-    { id: 'p005', name: 'Capacitor 100µF',           category: 'Passive',  price: 12,  stock: 200, unit: 'piece',     icon: '⚫',
-      imageUrl: 'images/components/capacitors.png',
-      desc: 'Electrolytic capacitor, 25V, aluminium body' },
-    { id: 'p006', name: 'Arduino Nano Clone',        category: 'MCU',      price: 180, stock: 30,  unit: 'piece',     icon: '🟦',
-      imageUrl: 'images/components/arduino_nano.png',
-      desc: 'ATmega328P, USB-C, pre-loaded bootloader' },
-    { id: 'p007', name: '9V Battery Clip',           category: 'Power',    price: 10,  stock: 500, unit: 'piece',     icon: '🔋',
-      imageUrl: 'images/components/battery_clip.png',
-      desc: 'Snap connector with red/black wire leads, 15cm' },
-    { id: 'p008', name: 'BC547 NPN Transistor',      category: 'Active',   price: 8,   stock: 300, unit: 'piece',     icon: '⚡',
-      imageUrl: 'images/components/transistors.png',
-      desc: 'General-purpose NPN BJT, 45V, 100mA, TO-92 package' },
-    { id: 'p009', name: 'L293D Motor Driver IC',     category: 'IC',       price: 35,  stock: 50,  unit: 'piece',     icon: '🎛️',
-      imageUrl: 'images/components/ic_chip.png',
-      desc: 'Dual H-bridge, controls 2 DC motors, 1A per channel' },
-    { id: 'p010', name: 'HC-SR04 Ultrasonic Sensor', category: 'Sensor',   price: 55,  stock: 40,  unit: 'piece',     icon: '📡',
-      imageUrl: 'images/components/ultrasonic_sensor.png',
-      desc: '2–400cm range, 15° beam angle, 5V operation' },
-    { id: 'p011', name: '16×2 LCD Display',          category: 'Display',  price: 90,  stock: 25,  unit: 'piece',     icon: '🖥️',
-      imageUrl: 'images/components/lcd_display.png',
-      desc: 'Blue backlight, HD44780 controller, I2C-compatible' },
-    { id: 'p012', name: 'Jumper Wires Set',          category: 'Wire',     price: 30,  stock: 200, unit: 'set of 40', icon: '🌈',
-      imageUrl: 'images/components/jumper_wires.png',
-      desc: 'Male-to-male, male-to-female, female-to-female included' },
-    { id: 'p013', name: 'Mini Breadboard',           category: 'Tool',     price: 45,  stock: 80,  unit: 'piece',     icon: '🔲',
-      imageUrl: 'images/components/breadboard.png',
-      desc: '400 tie-point, solderless, ABS plastic body' },
-    { id: 'p014', name: 'Push Button Switch',        category: 'Switch',   price: 5,   stock: 400, unit: 'pack of 5', icon: '🔘',
-      imageUrl: 'images/components/push_button.png',
-      desc: '6mm tactile momentary push button, PCB mount' },
-    { id: 'p015', name: 'LM7805 Voltage Regulator',  category: 'IC',       price: 18,  stock: 100, unit: 'piece',     icon: '🔌',
-      imageUrl: 'images/components/voltage_regulator.png',
-      desc: '+5V fixed output, TO-220 package, 1A output current' },
-  ];
-
-  /* ------ Seed products into localStorage ------ */
-  function seedProducts() {
-    const storedVersion = parseInt(localStorage.getItem('inf_catalog_version') || '0', 10);
-    if (storedVersion < CATALOG_VERSION) {
-      localStorage.setItem(PRODUCTS_KEY, JSON.stringify(DEFAULT_PRODUCTS));
-      localStorage.setItem('inf_catalog_version', String(CATALOG_VERSION));
+  /* ------ Fetch products from API ------ */
+  async function initProducts() {
+    try {
+      const res = await fetch('/api/products');
+      const data = await res.json();
+      if (data.ok && data.products) {
+        localStorage.setItem(PRODUCTS_KEY, JSON.stringify(data.products));
+      }
+    } catch (err) {
+      console.error('Failed to fetch products', err);
     }
   }
 
   /* ------ Product helpers ------ */
   function getProducts() {
     try { return JSON.parse(localStorage.getItem(PRODUCTS_KEY)) || []; }
-    catch { return DEFAULT_PRODUCTS; }
+    catch { return []; }
   }
 
   function getProductById(id) {
@@ -232,8 +187,7 @@ const ShopManager = (() => {
   }
 
   /* ------ Product mutation helpers ------ */
-  function addProduct(product) {
-    const products = getProducts();
+  async function addProduct(product) {
     const newProduct = {
       id: 'p-' + Date.now(),
       name: product.name || '',
@@ -245,50 +199,71 @@ const ShopManager = (() => {
       imageUrl: product.imageUrl || '',
       desc: product.desc || ''
     };
-    products.push(newProduct);
-    localStorage.setItem(PRODUCTS_KEY, JSON.stringify(products));
-    return { ok: true, product: newProduct };
-  }
-
-  function updateProduct(id, updatedFields) {
-    const products = getProducts();
-    const idx = products.findIndex(p => p.id === id);
-    if (idx !== -1) {
-      products[idx] = {
-        ...products[idx],
-        name: updatedFields.name !== undefined ? updatedFields.name : products[idx].name,
-        category: updatedFields.category !== undefined ? updatedFields.category : products[idx].category,
-        price: updatedFields.price !== undefined ? Number(updatedFields.price) : products[idx].price,
-        stock: updatedFields.stock !== undefined ? Number(updatedFields.stock) : products[idx].stock,
-        unit: updatedFields.unit !== undefined ? updatedFields.unit : products[idx].unit,
-        icon: updatedFields.icon !== undefined ? updatedFields.icon : products[idx].icon,
-        imageUrl: updatedFields.imageUrl !== undefined ? updatedFields.imageUrl : products[idx].imageUrl,
-        desc: updatedFields.desc !== undefined ? updatedFields.desc : products[idx].desc
-      };
-      localStorage.setItem(PRODUCTS_KEY, JSON.stringify(products));
-      return { ok: true, product: products[idx] };
+    try {
+      const res = await fetch('/api/products', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newProduct)
+      });
+      const data = await res.json();
+      if (data.ok) {
+        const products = getProducts();
+        products.push(data.product);
+        localStorage.setItem(PRODUCTS_KEY, JSON.stringify(products));
+        // notify storage listeners
+        window.dispatchEvent(new Event('storage'));
+        return { ok: true, product: data.product };
+      }
+      return { ok: false, error: data.error };
+    } catch (err) {
+      return { ok: false, error: 'Network error' };
     }
-    return { ok: false, error: 'Product not found.' };
   }
 
-  function deleteProduct(id) {
-    let products = getProducts();
-    const exists = products.some(p => p.id === id);
-    if (exists) {
-      products = products.filter(p => p.id !== id);
-      localStorage.setItem(PRODUCTS_KEY, JSON.stringify(products));
-      // Remove from cart if it's there
-      removeFromCart(id);
-      return { ok: true };
+  async function updateProduct(id, updatedFields) {
+    try {
+      const res = await fetch(`/api/products/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedFields)
+      });
+      const data = await res.json();
+      if (data.ok) {
+        const products = getProducts();
+        const idx = products.findIndex(p => p.id === id);
+        if (idx !== -1) {
+          products[idx] = data.product;
+          localStorage.setItem(PRODUCTS_KEY, JSON.stringify(products));
+          window.dispatchEvent(new Event('storage'));
+        }
+        return { ok: true, product: data.product };
+      }
+      return { ok: false, error: data.error };
+    } catch (err) {
+      return { ok: false, error: 'Network error' };
     }
-    return { ok: false, error: 'Product not found.' };
   }
 
-  /* ------ Init ------ */
-  seedProducts();
+  async function deleteProduct(id) {
+    try {
+      const res = await fetch(`/api/products/${id}`, { method: 'DELETE' });
+      const data = await res.json();
+      if (data.ok) {
+        let products = getProducts();
+        products = products.filter(p => p.id !== id);
+        localStorage.setItem(PRODUCTS_KEY, JSON.stringify(products));
+        removeFromCart(id);
+        window.dispatchEvent(new Event('storage'));
+        return { ok: true };
+      }
+      return { ok: false, error: data.error };
+    } catch (err) {
+      return { ok: false, error: 'Network error' };
+    }
+  }
 
   return {
-    getProducts, getProductById, getCategories,
+    initProducts, getProducts, getProductById, getCategories,
     getCart, addToCart, removeFromCart, updateCartQty, clearCart, getCartTotal, getCartCount,
     placeOrder, getOrders, getOrdersByCustomer, updateOrderStatus, markOrderSeen, getNewOrderCount,
     addProduct, updateProduct, deleteProduct

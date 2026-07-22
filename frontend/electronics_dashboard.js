@@ -386,7 +386,12 @@
   }
 
   /* ---- Initial Render ---- */
-  updateCartBadge();
+  (async function init() {
+    await ShopManager.initProducts();
+    renderCategories();
+    renderProducts();
+    updateCartBadge();
+  })();
 
   /* ========= STORAGE EVENT SYNC ========= */
   window.addEventListener('storage', (e) => {

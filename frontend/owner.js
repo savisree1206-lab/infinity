@@ -514,7 +514,7 @@
   }
 
   if (productForm) {
-    productForm.addEventListener('submit', (e) => {
+    productForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const id = document.getElementById('product-id').value;
       const name = document.getElementById('product-name').value.trim();
@@ -541,13 +541,17 @@
       const productData = { name, category, icon, price, stock, unit, desc, imageUrl };
       
       if (id) {
-        const result = ShopManager.updateProduct(id, productData);
+        const result = await ShopManager.updateProduct(id, productData);
         if (!result.ok) {
           productFormErr.textContent = result.error || 'Failed to update product.';
           return;
         }
       } else {
-        ShopManager.addProduct(productData);
+        const result = await ShopManager.addProduct(productData);
+        if (!result.ok) {
+          productFormErr.textContent = result.error || 'Failed to add product.';
+          return;
+        }
       }
 
       closeProductModal();
@@ -594,11 +598,11 @@
     });
 
     grid.querySelectorAll('.delete-product-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
+      btn.addEventListener('click', async () => {
         const id = btn.dataset.id;
         const p = ShopManager.getProductById(id);
         if (p && confirm(`Are you sure you want to delete "${p.name}"?`)) {
-          const result = ShopManager.deleteProduct(id);
+          const result = await ShopManager.deleteProduct(id);
           if (result.ok) {
             renderOwnerProducts();
             renderOverview();
@@ -611,7 +615,10 @@
   }
 
   /* ========= INIT ========= */
-  renderOverview();
-  updateNotifBadge();
+  (async function init() {
+    await ShopManager.initProducts();
+    renderOverview();
+    updateNotifBadge();
+  })();
 
 })();
