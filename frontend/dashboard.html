@@ -410,8 +410,8 @@
       };
 
       if (btnCheckout) {
-        btnCheckout.addEventListener('click', () => {
-          const res = ShopManager.placeOrder(user);
+        btnCheckout.addEventListener('click', async () => {
+          const res = await ShopManager.placeOrder(user);
           if (res.ok) {
             closeCart();
             updateCartBadge();
@@ -422,6 +422,14 @@
               orderToast.classList.remove('show');
               setTimeout(() => orderToast.classList.add('hidden'), 400);
             }, 4000);
+
+            if (document.getElementById('tab-orders') && document.getElementById('tab-orders').classList.contains('active')) {
+                if (typeof renderOrders === 'function') renderOrders();
+            } else if (typeof renderOrders === 'function') {
+                renderOrders();
+            }
+          } else {
+            alert(res.error);
           }
         });
       }

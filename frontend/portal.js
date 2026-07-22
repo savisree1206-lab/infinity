@@ -225,8 +225,8 @@
     }
 
     /* ========= CHECKOUT ========= */
-    document.getElementById('btn-checkout').addEventListener('click', () => {
-        const result = ShopManager.placeOrder(user);
+    document.getElementById('btn-checkout').addEventListener('click', async () => {
+        const result = await ShopManager.placeOrder(user);
         if (!result.ok) {
             alert(result.error);
             return;
@@ -240,6 +240,8 @@
         toast.classList.remove('hidden');
         toast.classList.add('show');
         setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.classList.add('hidden'), 400); }, 4000);
+        
+        renderOrders();
     });
 
     /* ========= ORDERS TAB ========= */
