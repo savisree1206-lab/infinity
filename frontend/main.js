@@ -199,6 +199,30 @@
     `;
     document.getElementById('nav-goto-dash')?.addEventListener('click', () => AuthManager.redirectToDashboard(user));
     document.getElementById('nav-home-signout')?.addEventListener('click', () => AuthManager.signOut());
+
+    // Update service cards on the landing page to link to dashboards
+    const services = [
+      { id: 'core-electronics', link: 'electronics_dashboard.html' },
+      { id: 'core-webdev', link: 'webdev_dashboard.html' },
+      { id: 'core-scrap', link: 'scrap_dashboard.html' }
+    ];
+
+    services.forEach(svc => {
+      const card = document.getElementById(svc.id);
+      if (card) {
+        card.style.cursor = 'pointer';
+        card.onclick = () => window.location.href = svc.link;
+        const btn = card.querySelector('.stone-btn');
+        if (btn) {
+          btn.href = 'javascript:void(0)';
+          btn.textContent = 'Go to Dashboard →';
+          btn.onclick = (e) => {
+            e.stopPropagation();
+            window.location.href = svc.link;
+          };
+        }
+      }
+    });
   })();
 
 
