@@ -480,6 +480,7 @@
       if (p) {
         document.getElementById('product-name').value = p.name;
         document.getElementById('product-category').value = p.category;
+        document.getElementById('product-code-number').value = p.codeNumber || '';
         document.getElementById('product-price').value = p.price;
         document.getElementById('product-stock').value = p.stock;
         document.getElementById('product-unit').value = p.unit;
@@ -522,6 +523,7 @@
       const id = document.getElementById('product-id').value.trim();
       const name = document.getElementById('product-name').value.trim();
       const category = document.getElementById('product-category').value.trim();
+      const codeNumber = document.getElementById('product-code-number').value.trim();
       const price = Number(document.getElementById('product-price').value);
       const stock = Number(document.getElementById('product-stock').value);
       const unit = document.getElementById('product-unit').value.trim();
@@ -541,7 +543,7 @@
       const existingProduct = originalId ? ShopManager.getProductById(originalId) : null;
       const icon = existingProduct ? existingProduct.icon : '⚡';
 
-      const productData = { id, name, category, icon, price, stock, unit, desc, imageUrl };
+      const productData = { id, name, category, codeNumber, icon, price, stock, unit, desc, imageUrl };
       
       if (originalId) {
         const result = await ShopManager.updateProduct(originalId, productData);
@@ -576,6 +578,7 @@
           <span class="product-cat-tag">${p.category}</span>
         </div>
         <div class="product-body" style="display: flex; flex-direction: column; height: 100%; flex: 1;">
+          ${p.codeNumber ? `<span class="product-code-badge">🔖 ${p.codeNumber}</span>` : ''}
           <h4 class="product-name">${p.name}</h4>
           <p class="product-desc" style="flex: 1;">${p.desc}</p>
           <div class="product-price-row" style="margin-bottom: 0.5rem; display: flex; align-items: baseline; gap: 0.5rem;">

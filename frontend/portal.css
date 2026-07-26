@@ -607,6 +607,16 @@
   backdrop-filter: blur(6px);
 }
 .product-body { padding: 1.1rem 1.2rem 1.2rem; flex: 1; display: flex; flex-direction: column; gap: 0; }
+.product-code-badge {
+  display: inline-block;
+  font-family: var(--font-alt); font-size: 0.62rem; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 0.18rem 0.6rem; border-radius: 50px;
+  background: rgba(255,215,0,0.1); color: var(--gold);
+  border: 1px solid rgba(255,215,0,0.28);
+  margin-bottom: 0.4rem;
+  width: fit-content;
+}
 .product-name { font-family: var(--font-head); font-size: 0.88rem; font-weight: 700; color: #fff; letter-spacing: 0.03em; margin-bottom: 0.35rem; }
 .product-desc { font-size: 0.78rem; color: var(--text-dim); line-height: 1.55; flex: 1; margin-bottom: 0.9rem; }
 .product-price-row {
@@ -995,23 +1005,45 @@ select.portal-select:focus {
 .item-count-badge { font-size: 0.75rem; padding: 0.2rem 0.6rem; border-radius: 50px; background: rgba(180,79,255,0.12); color: var(--purple); border: 1px solid rgba(180,79,255,0.25); }
 .date-cell { font-size: 0.8rem; color: var(--text-dim); white-space: nowrap; }
 .status-select {
-  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12);
+  background: #1a1a2e; border: 1px solid rgba(255,255,255,0.18);
   border-radius: 8px; padding: 0.35rem 0.6rem;
   color: #fff; font-family: var(--font-alt); font-size: 0.8rem;
   cursor: pointer; outline: none; transition: var(--transition);
+  appearance: auto;
 }
 .status-select:focus { border-color: var(--blue); }
+.status-select option {
+  background: #1a1a2e;
+  color: #fff;
+  font-family: var(--font-alt);
+}
+.status-select option:hover,
+.status-select option:checked {
+  background: #00a3cc;
+  color: #fff;
+}
 .row-flash { animation: rowFlash 0.6s ease; }
 @keyframes rowFlash { 0%,100%{background:transparent} 50%{background:rgba(0,220,100,0.08)} }
 
 .order-filter-row { margin-top: 0.5rem; }
 .portal-select {
-  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12);
+  background: #1a1a2e; border: 1px solid rgba(255,255,255,0.18);
   border-radius: 8px; padding: 0.45rem 0.9rem;
   color: #fff; font-family: var(--font-alt); font-size: 0.85rem;
   cursor: pointer; outline: none; transition: var(--transition);
+  appearance: auto;
 }
 .portal-select:focus { border-color: var(--blue); }
+.portal-select option {
+  background: #1a1a2e;
+  color: #fff;
+  font-family: var(--font-alt);
+}
+.portal-select option:hover,
+.portal-select option:checked {
+  background: #00a3cc;
+  color: #fff;
+}
 
 /* ========= PROFILE CARD ========= */
 .profile-card {

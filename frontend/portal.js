@@ -94,7 +94,11 @@
         const grid = document.getElementById('product-grid');
         let products = ShopManager.getProducts();
         if (activeCategory !== 'All') products = products.filter(p => p.category === activeCategory);
-        if (searchQuery) products = products.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()) || p.category.toLowerCase().includes(searchQuery.toLowerCase()));
+        if (searchQuery) products = products.filter(p =>
+            p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            p.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (p.codeNumber && p.codeNumber.toLowerCase().includes(searchQuery.toLowerCase()))
+        );
 
         if (products.length === 0) {
             grid.innerHTML = '<div class="empty-state"><p>No components found.</p></div>';
@@ -109,14 +113,13 @@
           <span class="product-cat-tag">${p.category}</span>
         </div>
         <div class="product-body">
+          ${p.codeNumber ? `<span class="product-code-badge">🔖 ${p.codeNumber}</span>` : ''}
           <h4 class="product-name">${p.name}</h4>
           <p class="product-desc">${p.desc}</p>
           <p class="product-unit">${p.unit}</p>
-          <div class="product-footer">
-            <span class="product-price">₹${p.price}</span>
-            <div class="product-stock ${p.stock < 10 ? 'low-stock' : ''}">
-              ${p.stock < 10 ? '⚠️ ' : ''}${p.stock} in stock
-            </div>
+          <span class="product-price">₹${p.price}</span>
+          <div class="product-stock ${p.stock < 10 ? 'low-stock' : ''}" style="font-size:0.75rem; margin-bottom:0.7rem;">
+            ${p.stock < 10 ? '⚠️ ' : ''}${p.stock} in stock
           </div>
           <button class="add-to-cart-btn" data-id="${p.id}" ${p.stock === 0 ? 'disabled' : ''}>
             ${p.stock === 0 ? 'Out of Stock' : '+ Add to Cart'}

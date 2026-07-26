@@ -204,6 +204,7 @@ const ShopManager = (() => {
       id: product.id || 'p-' + Date.now(),
       name: product.name || '',
       category: product.category || '',
+      codeNumber: product.codeNumber || '',
       price: Number(product.price) || 0,
       stock: Number(product.stock) || 0,
       unit: product.unit || '',
