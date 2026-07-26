@@ -12,6 +12,7 @@ const BookingSchema = new mongoose.Schema({
   budget: { type: String },
   status: { type: String, default: 'Pending Review' },
   date: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now },
   source: { type: String } // 'Web Dev' or 'Electronics'
 });
 

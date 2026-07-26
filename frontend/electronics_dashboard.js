@@ -116,15 +116,66 @@
   });
 
   /* ========= SERVICE BOOKINGS ========= */
-  function getBookings() {
-    try { return JSON.parse(localStorage.getItem('inf_bookings')) || []; }
+  const BOOKINGS_CACHE_KEY = 'inf_bookings_cache';
+  let lastKnownStatuses = {}; // bookingId -> status
+
+  async function fetchBookingsFromAPI() {
+    try {
+      const res = await fetch('/api/bookings');
+      const data = await res.json();
+      if (data.ok && data.bookings) {
+        const myBookings = data.bookings.filter(b => b.customerId === user.id);
+        // Detect status changes
+        myBookings.forEach(b => {
+          if (lastKnownStatuses[b.id] && lastKnownStatuses[b.id] !== b.status) {
+            showStatusToast(b.title, b.status);
+          }
+          lastKnownStatuses[b.id] = b.status;
+        });
+        localStorage.setItem(BOOKINGS_CACHE_KEY, JSON.stringify(myBookings));
+        return myBookings;
+      }
+    } catch (e) {
+      console.warn('Could not fetch bookings from API, using cache.', e);
+    }
+    // Fallback to local cache
+    try { return JSON.parse(localStorage.getItem(BOOKINGS_CACHE_KEY)) || []; }
     catch { return []; }
+  }
+
+  function getBookings() {
+    try { return JSON.parse(localStorage.getItem(BOOKINGS_CACHE_KEY)) || []; }
+    catch { return []; }
+  }
+
+  function showStatusToast(title, status) {
+    let toast = document.getElementById('booking-status-toast');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.id = 'booking-status-toast';
+      toast.style.cssText = 'position:fixed;bottom:2rem;right:2rem;z-index:9999;background:linear-gradient(135deg,rgba(0,207,255,0.18),rgba(180,79,255,0.18));border:1px solid rgba(0,207,255,0.4);backdrop-filter:blur(20px);border-radius:16px;padding:1rem 1.4rem;display:flex;align-items:center;gap:0.9rem;max-width:340px;box-shadow:0 8px 32px rgba(0,0,0,0.4);transform:translateY(120%);transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1);';
+      document.body.appendChild(toast);
+    }
+    const statusColor = {
+      'In Progress': '#00cfff', 'Completed': '#00e676',
+      'On Hold': '#ff5050', 'Pending Review': '#ffc107'
+    }[status] || '#fff';
+    toast.innerHTML = `
+      <span style="font-size:1.5rem;">🔔</span>
+      <div>
+        <div style="font-size:0.78rem;color:rgba(255,255,255,0.55);margin-bottom:0.2rem;">Booking Status Updated</div>
+        <div style="font-size:0.9rem;font-weight:700;color:#fff;">${title}</div>
+        <div style="font-size:0.82rem;font-weight:600;color:${statusColor};margin-top:0.2rem;">→ ${status}</div>
+      </div>`;
+    toast.style.transform = 'translateY(0)';
+    setTimeout(() => { toast.style.transform = 'translateY(120%)'; }, 5000);
   }
 
   function saveBooking(booking) {
     const bookings = getBookings();
     bookings.unshift(booking);
-    localStorage.setItem('inf_bookings', JSON.stringify(bookings));
+    localStorage.setItem(BOOKINGS_CACHE_KEY, JSON.stringify(bookings));
+    lastKnownStatuses[booking.id] = booking.status;
 
     booking.source = 'Electronics';
     fetch('/api/bookings', {
@@ -133,12 +184,12 @@
       body: JSON.stringify(booking)
     }).catch(e => console.error(e));
 
-    localStorage.setItem('inf_last_booking', JSON.stringify({ 
-      id: booking.id, 
+    localStorage.setItem('inf_last_booking', JSON.stringify({
+      id: booking.id,
       customerName: booking.customerName,
       type: booking.type,
       title: booking.title,
-      ts: Date.now() 
+      ts: Date.now()
     }));
   }
 
@@ -158,36 +209,62 @@
       date: new Date().toISOString()
     };
     saveBooking(booking);
-    
+
     bookingForm.reset();
     const successMsg = document.getElementById('booking-success-msg');
     successMsg.style.display = 'block';
     setTimeout(() => successMsg.style.display = 'none', 4000);
   });
 
-  function renderBookings() {
-    const bookings = getBookings().filter(b => b.customerId === user.id);
+  async function renderBookings() {
+    const bookings = await fetchBookingsFromAPI();
     const container = document.getElementById('bookings-list');
-    
+
     if (bookings.length === 0) {
       container.innerHTML = '<div class="empty-state"><span>📋</span><p>You have no projects yet.</p></div>';
       return;
     }
-    
-    container.innerHTML = bookings.map(b => `
+
+    const statusColors = {
+      'Pending Review': { bg: 'rgba(255,193,7,0.15)',  border: 'rgba(255,193,7,0.4)',  text: '#ffc107' },
+      'Under Review':   { bg: 'rgba(255,193,7,0.15)',  border: 'rgba(255,193,7,0.4)',  text: '#ffc107' },
+      'In Progress':    { bg: 'rgba(0,207,255,0.12)',  border: 'rgba(0,207,255,0.4)',  text: '#00cfff' },
+      'Completed':      { bg: 'rgba(0,230,118,0.12)',  border: 'rgba(0,230,118,0.4)',  text: '#00e676' },
+      'On Hold':        { bg: 'rgba(255,80,80,0.12)',  border: 'rgba(255,80,80,0.4)',  text: '#ff5050' }
+    };
+
+    container.innerHTML = bookings.map(b => {
+      const s = statusColors[b.status] || statusColors['Pending Review'];
+      return `
       <div class="order-card">
-        <div class="order-header">
-          <span class="order-id">${b.id} - ${b.title}</span>
-          <span class="order-status-badge status-pending">${b.status}</span>
+        <div class="order-header" style="display:flex;justify-content:space-between;align-items:flex-start;">
+          <div>
+            <span class="order-id">${b.id}</span>
+            <div style="font-size:0.95rem;font-weight:700;color:#fff;margin:0.2rem 0;">${b.title}</div>
+            <div style="font-size:0.78rem;color:var(--text-dim);">${b.type} · ${new Date(b.date).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})}</div>
+          </div>
+          <span style="background:${s.bg};border:1px solid ${s.border};color:${s.text};font-size:0.72rem;font-weight:700;padding:0.25rem 0.8rem;border-radius:50px;white-space:nowrap;">${b.status}</span>
         </div>
-        <div class="order-body" style="margin-top: 10px; color: var(--text-muted);">
-          <p><strong>Type:</strong> ${b.type}</p>
-          <p><strong>Description:</strong> ${b.desc}</p>
-          <p><strong>Date:</strong> ${new Date(b.date).toLocaleDateString()}</p>
+        <div class="order-body" style="margin-top:0.7rem;color:var(--text-dim);font-size:0.82rem;line-height:1.55;">
+          <p><strong style="color:rgba(255,255,255,0.55);">Type:</strong> ${b.type}</p>
+          <p style="margin-top:0.3rem;"><strong style="color:rgba(255,255,255,0.55);">Description:</strong> ${b.desc.length > 140 ? b.desc.slice(0, 140) + '…' : b.desc}</p>
         </div>
-      </div>
-    `).join('');
+      </div>`;
+    }).join('');
   }
+
+  // Poll for status updates every 15 seconds
+  setInterval(async () => {
+    if (document.getElementById('tab-my-bookings')?.classList.contains('active')) {
+      await renderBookings();
+    } else {
+      // Silent poll to detect changes even when tab is not active
+      await fetchBookingsFromAPI();
+    }
+  }, 15000);
+
+  // Seed lastKnownStatuses from cache on load
+  getBookings().forEach(b => { lastKnownStatuses[b.id] = b.status; });
 
 
   /* ========= SHOP & CART (Reusing ShopManager) ========= */

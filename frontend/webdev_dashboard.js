@@ -81,17 +81,64 @@
   });
 
   /* ========= BOOKING FORM ========= */
-  const BOOKINGS_KEY = 'inf_webdev_bookings';
+  const BOOKINGS_CACHE_KEY = 'inf_webdev_bookings_cache';
+  let lastKnownStatuses = {};
+
+  async function fetchBookingsFromAPI() {
+    try {
+      const res = await fetch('/api/bookings');
+      const data = await res.json();
+      if (data.ok && data.bookings) {
+        const myBookings = data.bookings.filter(b => b.customerId === user.id);
+        myBookings.forEach(b => {
+          if (lastKnownStatuses[b.id] && lastKnownStatuses[b.id] !== b.status) {
+            showStatusToast(b.title, b.status);
+          }
+          lastKnownStatuses[b.id] = b.status;
+        });
+        localStorage.setItem(BOOKINGS_CACHE_KEY, JSON.stringify(myBookings));
+        return myBookings;
+      }
+    } catch (e) {
+      console.warn('Could not fetch bookings from API, using cache.', e);
+    }
+    try { return JSON.parse(localStorage.getItem(BOOKINGS_CACHE_KEY)) || []; }
+    catch { return []; }
+  }
 
   function getBookings() {
-    try { return JSON.parse(localStorage.getItem(BOOKINGS_KEY)) || []; }
+    try { return JSON.parse(localStorage.getItem(BOOKINGS_CACHE_KEY)) || []; }
     catch { return []; }
+  }
+
+  function showStatusToast(title, status) {
+    let toast = document.getElementById('booking-status-toast');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.id = 'booking-status-toast';
+      toast.style.cssText = 'position:fixed;bottom:2rem;right:2rem;z-index:9999;background:linear-gradient(135deg,rgba(0,207,255,0.18),rgba(180,79,255,0.18));border:1px solid rgba(0,207,255,0.4);backdrop-filter:blur(20px);border-radius:16px;padding:1rem 1.4rem;display:flex;align-items:center;gap:0.9rem;max-width:340px;box-shadow:0 8px 32px rgba(0,0,0,0.4);transform:translateY(120%);transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1);';
+      document.body.appendChild(toast);
+    }
+    const statusColor = {
+      'In Progress': '#00cfff', 'Completed': '#00e676',
+      'On Hold': '#ff5050', 'Pending Review': '#ffc107'
+    }[status] || '#fff';
+    toast.innerHTML = `
+      <span style="font-size:1.5rem;">🔔</span>
+      <div>
+        <div style="font-size:0.78rem;color:rgba(255,255,255,0.55);margin-bottom:0.2rem;">Booking Status Updated</div>
+        <div style="font-size:0.9rem;font-weight:700;color:#fff;">${title}</div>
+        <div style="font-size:0.82rem;font-weight:600;color:${statusColor};margin-top:0.2rem;">→ ${status}</div>
+      </div>`;
+    toast.style.transform = 'translateY(0)';
+    setTimeout(() => { toast.style.transform = 'translateY(120%)'; }, 5000);
   }
 
   function saveBooking(booking) {
     const list = getBookings();
     list.unshift(booking);
-    localStorage.setItem(BOOKINGS_KEY, JSON.stringify(list));
+    localStorage.setItem(BOOKINGS_CACHE_KEY, JSON.stringify(list));
+    lastKnownStatuses[booking.id] = booking.status;
 
     booking.source = 'Web Dev';
     fetch('/api/bookings', {
@@ -100,12 +147,12 @@
       body: JSON.stringify(booking)
     }).catch(e => console.error(e));
 
-    localStorage.setItem('inf_last_booking', JSON.stringify({ 
-      id: booking.id, 
+    localStorage.setItem('inf_last_booking', JSON.stringify({
+      id: booking.id,
       customerName: booking.customerName,
       type: booking.type,
       title: booking.title,
-      ts: Date.now() 
+      ts: Date.now()
     }));
   }
 
@@ -146,10 +193,22 @@
     setTimeout(() => toast.classList.add('hidden'), 4000);
   }
 
+  // Poll for status updates every 15 seconds
+  setInterval(async () => {
+    if (document.getElementById('tab-my-bookings')?.classList.contains('active')) {
+      await renderBookings();
+    } else {
+      await fetchBookingsFromAPI();
+    }
+  }, 15000);
+
+  // Seed lastKnownStatuses from cache on load
+  getBookings().forEach(b => { lastKnownStatuses[b.id] = b.status; });
+
   /* ========= RENDER BOOKINGS ========= */
-  function renderBookings() {
+  async function renderBookings() {
     const list = document.getElementById('wd-bookings-list');
-    const bookings = getBookings().filter(b => b.customerId === user.id);
+    const bookings = await fetchBookingsFromAPI();
 
     if (!bookings.length) {
       list.innerHTML = `
@@ -167,6 +226,7 @@
 
     const statusColors = {
       'Under Review':  { bg: 'rgba(255,193,7,0.15)',  border: 'rgba(255,193,7,0.4)',  text: '#ffc107' },
+      'Pending Review':{ bg: 'rgba(255,193,7,0.15)',  border: 'rgba(255,193,7,0.4)',  text: '#ffc107' },
       'In Progress':   { bg: 'rgba(0,207,255,0.12)',  border: 'rgba(0,207,255,0.4)',  text: '#00cfff' },
       'Completed':     { bg: 'rgba(0,230,118,0.12)',  border: 'rgba(0,230,118,0.4)',  text: '#00e676' },
       'On Hold':       { bg: 'rgba(255,80,80,0.12)',  border: 'rgba(255,80,80,0.4)',  text: '#ff5050' }
@@ -186,7 +246,7 @@
             <span class="order-status" style="background:${s.bg};border-color:${s.border};color:${s.text};">${b.status}</span>
           </div>
           <div style="margin-top:0.75rem;font-size:0.82rem;color:var(--text-dim);line-height:1.5;">
-            <strong style="color:rgba(255,255,255,0.6)">Stack:</strong> ${b.stack}
+            <strong style="color:rgba(255,255,255,0.6)">Stack:</strong> ${b.stack || 'Not specified'}
           </div>
           <div style="margin-top:0.4rem;font-size:0.82rem;color:var(--text-dim);line-height:1.5;border-top:1px solid var(--border);padding-top:0.5rem;">
             ${b.desc.length > 140 ? b.desc.slice(0, 140) + '…' : b.desc}

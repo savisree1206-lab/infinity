@@ -189,7 +189,7 @@ app.put('/api/bookings/:id/status', async (req, res) => {
     const { status } = req.body;
     const booking = await Booking.findOneAndUpdate(
       { id: req.params.id }, 
-      { status }, 
+      { status, updatedAt: new Date() }, 
       { new: true }
     );
     if (!booking) return res.status(404).json({ ok: false, error: 'Booking not found.' });
