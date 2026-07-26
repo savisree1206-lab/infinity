@@ -269,6 +269,7 @@
           <tr>
             <th>Order ID</th>
             <th>Customer</th>
+            <th>Delivery & Contact Details</th>
             <th>Items</th>
             <th>Total</th>
             <th>Date</th>
@@ -282,12 +283,30 @@
               <td><span class="order-id-cell">${o.id}${o.isNewOrder ? ' <span class="new-dot">NEW</span>' : ''}</span></td>
               <td>
                 <div class="customer-cell">
-                  <div class="cust-avatar">${o.customerName.charAt(0).toUpperCase()}</div>
+                  <div class="cust-avatar">${(o.deliveryDetails?.name || o.customerName).charAt(0).toUpperCase()}</div>
                   <div>
-                    <div class="cust-name">${o.customerName}</div>
+                    <div class="cust-name">${o.deliveryDetails?.name || o.customerName}</div>
                     <div class="cust-email">${o.customerEmail}</div>
                   </div>
                 </div>
+              </td>
+              <td>
+                ${o.deliveryDetails && (o.deliveryDetails.address || o.deliveryDetails.phone) ? `
+                  <div style="font-size: 0.82rem; line-height: 1.5; background: rgba(255, 255, 255, 0.035); padding: 8px 12px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.08); min-width: 200px; max-width: 260px;">
+                    <div style="color: var(--gold); font-weight: 600; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">
+                      <span>📞</span> <span style="font-family: monospace; font-size: 0.88rem;">${o.deliveryDetails.phone || 'N/A'}</span>
+                    </div>
+                    <div style="color: #e2e8f0; font-size: 0.78rem; margin-bottom: 4px;">
+                      <span>📍</span> ${o.deliveryDetails.address || ''}${o.deliveryDetails.city ? ', ' + o.deliveryDetails.city : ''}${o.deliveryDetails.pincode ? ' - ' + o.deliveryDetails.pincode : ''}
+                    </div>
+                    ${o.deliveryDetails.landmark ? `<div style="color: var(--text-dim); font-size: 0.75rem; margin-top: 2px;">🏷️ <strong>Landmark:</strong> ${o.deliveryDetails.landmark}</div>` : ''}
+                    ${o.deliveryDetails.notes ? `<div style="color: var(--gold); font-size: 0.75rem; margin-top: 4px; font-style: italic; background: rgba(255,215,0,0.08); padding: 4px 6px; border-radius: 4px; border-left: 2px solid var(--gold);">📝 "${o.deliveryDetails.notes}"</div>` : ''}
+                  </div>
+                ` : `
+                  <div style="font-size: 0.78rem; color: var(--text-dim); font-style: italic; min-width: 150px; background: rgba(255,255,255,0.02); padding: 6px 10px; border-radius: 6px; border: 1px dashed rgba(255,255,255,0.1);">
+                    No delivery details provided<br><span style="font-size: 0.72rem; opacity: 0.7;">(Standard / Digital Order)</span>
+                  </div>
+                `}
               </td>
               <td>
                 <span class="item-count-badge">${o.items.length} item${o.items.length > 1 ? 's' : ''}</span>

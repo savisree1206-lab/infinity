@@ -5,6 +5,15 @@ const OrderSchema = new mongoose.Schema({
   customerId: { type: String, required: true },
   customerName: { type: String, required: true },
   customerEmail: { type: String, required: true },
+  deliveryDetails: {
+    name: String,
+    phone: String,
+    address: String,
+    city: String,
+    pincode: String,
+    landmark: String,
+    notes: String
+  },
   items: [{
     productId: String,
     name: String,
