@@ -95,15 +95,33 @@ const ShopManager = (() => {
   }
 
   async function initOrders() {
+    let serverOrders = [];
     try {
       const res = await fetch('/api/orders');
       const data = await res.json();
       if (data.ok && data.orders) {
-        saveOrders(data.orders);
+        serverOrders = data.orders;
       }
     } catch (e) {
       console.error('Failed to fetch orders', e);
     }
+
+    try {
+      const localOrders = getOrders();
+      if (serverOrders.length === 0) {
+        serverOrders = localOrders;
+      } else {
+        localOrders.forEach(lo => {
+          const found = serverOrders.find(o => o.id === lo.id);
+          if (!found) serverOrders.unshift(lo);
+          else if (lo.updatedAt && (!found.updatedAt || new Date(lo.updatedAt) > new Date(found.updatedAt))) {
+            found.status = lo.status;
+            found.updatedAt = lo.updatedAt;
+          }
+        });
+      }
+      saveOrders(serverOrders);
+    } catch(e) {}
   }
   function saveOrders(orders) {
     localStorage.setItem(ORDERS_KEY, JSON.stringify(orders));

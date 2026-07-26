@@ -75,6 +75,32 @@
           if (bData.ok) serverBookings = bData.bookings;
         } catch(e) { console.warn('Bookings JSON error (Did you restart the backend?)'); }
       }
+
+      // Merge local storage fallback orders (for serverless/Vercel static without live MongoDB)
+      try {
+        const localOrders = JSON.parse(localStorage.getItem('inf_orders')) || [];
+        localOrders.forEach(lo => {
+          const found = serverOrders.find(o => o.id === lo.id);
+          if (!found) serverOrders.unshift(lo);
+          else if (lo.updatedAt && (!found.updatedAt || new Date(lo.updatedAt) > new Date(found.updatedAt))) {
+            found.status = lo.status;
+          }
+        });
+      } catch(e) {}
+
+      // Merge local storage fallback bookings
+      try {
+        const wdBookings = JSON.parse(localStorage.getItem('inf_webdev_bookings_cache')) || [];
+        const elBookings = JSON.parse(localStorage.getItem('inf_service_bookings_cache')) || [];
+        const allLocal = [...wdBookings, ...elBookings];
+        allLocal.forEach(lb => {
+          const found = serverBookings.find(b => b.id === lb.id);
+          if (!found) serverBookings.unshift(lb);
+          else if (lb.updatedAt && (!found.updatedAt || new Date(lb.updatedAt) > new Date(found.updatedAt))) {
+            found.status = lb.status;
+          }
+        });
+      } catch(e) {}
       
       updateNotifBadge();
       const overviewTab = document.getElementById('tab-overview');
@@ -292,6 +318,19 @@
       container.querySelectorAll('.status-select').forEach(sel => {
         sel.addEventListener('change', async () => {
           try {
+            // Update local storage cache first for immediate sync across tabs/static deployment
+            try {
+              const localOrders = JSON.parse(localStorage.getItem('inf_orders')) || [];
+              const idx = localOrders.findIndex(o => o.id === sel.dataset.id);
+              if (idx !== -1) {
+                localOrders[idx].status = sel.value;
+                localOrders[idx].updatedAt = new Date().toISOString();
+                localStorage.setItem('inf_orders', JSON.stringify(localOrders));
+              }
+              const sIdx = serverOrders.findIndex(o => o.id === sel.dataset.id);
+              if (sIdx !== -1) serverOrders[sIdx].status = sel.value;
+            } catch(e) {}
+
             await fetch(`/api/orders/${sel.dataset.id}/status`, {
               method: 'PUT',
               headers: { 'Content-Type': 'application/json' },
@@ -384,6 +423,23 @@
 
   async function updateBookingStatus(id, source, newStatus) {
     try {
+      // Update local storage caches first for snappy sync across tabs/static deployment
+      ['inf_webdev_bookings_cache', 'inf_service_bookings_cache'].forEach(key => {
+        try {
+          const list = JSON.parse(localStorage.getItem(key)) || [];
+          const idx = list.findIndex(b => b.id === id);
+          if (idx !== -1) {
+            list[idx].status = newStatus;
+            list[idx].updatedAt = new Date().toISOString();
+            localStorage.setItem(key, JSON.stringify(list));
+          }
+        } catch (e) {}
+      });
+      const sIdx = serverBookings.findIndex(b => b.id === id);
+      if (sIdx !== -1) serverBookings[sIdx].status = newStatus;
+      renderOverview();
+      renderBookings();
+
       await fetch(`/api/bookings/${id}/status`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },

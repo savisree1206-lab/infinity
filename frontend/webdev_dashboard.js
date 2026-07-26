@@ -85,25 +85,45 @@
   let lastKnownStatuses = {};
 
   async function fetchBookingsFromAPI() {
+    let myBookings = [];
     try {
       const res = await fetch('/api/bookings');
       const data = await res.json();
       if (data.ok && data.bookings) {
-        const myBookings = data.bookings.filter(b => b.customerId === user.id);
-        myBookings.forEach(b => {
-          if (lastKnownStatuses[b.id] && lastKnownStatuses[b.id] !== b.status) {
-            showStatusToast(b.title, b.status);
-          }
-          lastKnownStatuses[b.id] = b.status;
-        });
-        localStorage.setItem(BOOKINGS_CACHE_KEY, JSON.stringify(myBookings));
-        return myBookings;
+        myBookings = data.bookings.filter(b => b.customerId === user.id);
       }
     } catch (e) {
       console.warn('Could not fetch bookings from API, using cache.', e);
     }
-    try { return JSON.parse(localStorage.getItem(BOOKINGS_CACHE_KEY)) || []; }
-    catch { return []; }
+
+    // Fallback and merge with local cache (crucial for static / serverless without MongoDB)
+    try {
+      const localBookings = JSON.parse(localStorage.getItem(BOOKINGS_CACHE_KEY)) || [];
+      if (myBookings.length === 0) {
+        myBookings = localBookings.filter(b => !b.customerId || b.customerId === user.id);
+      } else {
+        localBookings.forEach(lb => {
+          if (lb.customerId && lb.customerId !== user.id) return;
+          const found = myBookings.find(mb => mb.id === lb.id);
+          if (!found) myBookings.unshift(lb);
+          else if (lb.updatedAt && (!found.updatedAt || new Date(lb.updatedAt) > new Date(found.updatedAt))) {
+            found.status = lb.status;
+            found.updatedAt = lb.updatedAt;
+          }
+        });
+      }
+    } catch (e) {}
+
+    // Run status notifications on the final merged bookings list
+    myBookings.forEach(b => {
+      if (lastKnownStatuses[b.id] && lastKnownStatuses[b.id] !== b.status) {
+        showStatusToast(b.title, b.status);
+      }
+      lastKnownStatuses[b.id] = b.status;
+    });
+
+    localStorage.setItem(BOOKINGS_CACHE_KEY, JSON.stringify(myBookings));
+    return myBookings;
   }
 
   function getBookings() {
@@ -204,6 +224,16 @@
 
   // Seed lastKnownStatuses from cache on load
   getBookings().forEach(b => { lastKnownStatuses[b.id] = b.status; });
+
+  window.addEventListener('storage', async (e) => {
+    if (e.key === BOOKINGS_CACHE_KEY) {
+      if (document.getElementById('tab-my-bookings')?.classList.contains('active')) {
+        await renderBookings();
+      } else {
+        await fetchBookingsFromAPI();
+      }
+    }
+  });
 
   /* ========= RENDER BOOKINGS ========= */
   async function renderBookings() {
