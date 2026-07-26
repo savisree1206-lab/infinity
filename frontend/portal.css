@@ -985,16 +985,21 @@ select.portal-select:focus {
 /* Owner orders table */
 .orders-table {
   width: 100%; border-collapse: collapse; font-size: 0.85rem;
+  background: #080912;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.85);
 }
 .orders-table th {
-  padding: 0.9rem 1.2rem; text-align: left;
-  font-family: var(--font-alt); font-size: 0.75rem; font-weight: 700;
-  letter-spacing: 0.1em; color: var(--text-dim); text-transform: uppercase;
-  border-bottom: 1px solid var(--border); background: rgba(255,255,255,0.02);
+  padding: 1rem 1.2rem; text-align: left;
+  font-family: var(--font-alt); font-size: 0.76rem; font-weight: 700;
+  letter-spacing: 0.1em; color: #ffffff; text-transform: uppercase;
+  border-bottom: 1px solid rgba(255,255,255,0.16); background: #121424;
 }
-.orders-table td { padding: 1rem 1.2rem; border-bottom: 1px solid rgba(255,255,255,0.04); vertical-align: middle; }
+.orders-table td { padding: 1rem 1.2rem; border-bottom: 1px solid rgba(255,255,255,0.08); vertical-align: middle; background: #0c0e1a; color: #f0f4f8; }
 .order-row:last-child td { border-bottom: none; }
-.order-row:hover td { background: rgba(255,255,255,0.02); }
+.order-row:hover td { background: #181a30; }
 .new-order-row td:first-child { border-left: 3px solid var(--gold); }
 .order-id-cell { font-family: var(--font-head); font-size: 0.75rem; color: var(--text-dim); }
 .new-dot { background: var(--gold); color: #000; font-size: 0.6rem; font-weight: 800; padding: 0.1rem 0.4rem; border-radius: 50px; margin-left: 0.4rem; }
