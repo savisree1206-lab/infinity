@@ -421,7 +421,7 @@
 /* ========= PORTAL LAYOUT ========= */
 .portal-body { overflow-x: hidden; }
 
-.portal-nav { background: rgba(5,8,21,0.95) !important; backdrop-filter: blur(20px) !important; border-color: var(--border) !important; box-shadow: 0 4px 30px rgba(0,207,255,0.07) !important; }
+.portal-nav { background: rgba(4,6,18,0.98) !important; backdrop-filter: blur(20px) !important; border-color: var(--border) !important; box-shadow: 0 4px 30px rgba(0,207,255,0.07) !important; }
 
 .portal-nav-center { flex: 1; display: flex; justify-content: center; }
 .portal-badge {
@@ -477,7 +477,7 @@
 .portal-sidebar {
   width: 220px;
   flex-shrink: 0;
-  background: rgba(5, 8, 21, 0.9);
+  background: rgba(4, 6, 18, 0.97);
   border-right: 1px solid var(--border);
   backdrop-filter: blur(20px);
   padding: 2rem 1rem;

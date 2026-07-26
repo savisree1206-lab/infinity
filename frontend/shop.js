@@ -109,7 +109,7 @@ const ShopManager = (() => {
     localStorage.setItem(ORDERS_KEY, JSON.stringify(orders));
   }
 
-  async function placeOrder(user) {
+  async function placeOrder(user, deliveryDetails = {}) {
     const cart = getCart();
     if (cart.length === 0) return { ok: false, error: 'Cart is empty.' };
 
@@ -125,6 +125,7 @@ const ShopManager = (() => {
       customerId: user.id,
       customerName: user.name,
       customerEmail: user.email,
+      deliveryDetails,
       items,
       total,
       status: 'Pending',

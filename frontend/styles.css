@@ -13,7 +13,7 @@
   --orange-dim:#735520;
   --gold:     #d4af37;
   --bg-dark:  #000000;
-  --bg-card:  rgba(15, 15, 15, 0.85);
+  --bg-card:  rgba(8, 8, 16, 0.96);
   --glass:    rgba(255,255,255,0.03);
   --border:   rgba(197, 160, 89, 0.3);
   --text:     #ffffff;
@@ -1099,7 +1099,7 @@ img { max-width: 100%; }
     position: absolute;
     top: 72px;
     left: 0; right: 0;
-    background: rgba(5,8,21,0.97);
+    background: rgba(4, 6, 18, 0.97);
     backdrop-filter: blur(20px);
     padding: 1.5rem;
     border-bottom: 1px solid var(--border);

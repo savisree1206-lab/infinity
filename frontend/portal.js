@@ -227,25 +227,85 @@
         });
     }
 
-    /* ========= CHECKOUT ========= */
-    document.getElementById('btn-checkout').addEventListener('click', async () => {
-        const result = await ShopManager.placeOrder(user);
-        if (!result.ok) {
-            alert(result.error);
-            return;
-        }
-        closeCart();
-        updateCartBadge();
-        renderCartItems();
+    /* ========= DELIVERY MODAL ========= */
+    const deliveryModal = document.getElementById('delivery-modal');
+    const deliveryModalClose = document.getElementById('delivery-modal-close');
+    const deliveryForm = document.getElementById('delivery-form');
+    const deliveryFormErr = document.getElementById('delivery-form-err');
 
-        const toast = document.getElementById('order-toast');
-        document.getElementById('order-toast-msg').textContent = `Order ${result.order.id} placed! Total: ₹${result.order.total}`;
-        toast.classList.remove('hidden');
-        toast.classList.add('show');
-        setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.classList.add('hidden'), 400); }, 4000);
-        
-        renderOrders();
+    function openDeliveryModal() {
+        if (!deliveryModal) return;
+        deliveryModal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        if (deliveryFormErr) deliveryFormErr.textContent = '';
+    }
+    function closeDeliveryModal() {
+        if (!deliveryModal) return;
+        deliveryModal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    if (deliveryModalClose) deliveryModalClose.addEventListener('click', closeDeliveryModal);
+    if (deliveryModal) deliveryModal.addEventListener('click', (e) => { if (e.target === deliveryModal) closeDeliveryModal(); });
+
+    /* ========= CHECKOUT ========= */
+    document.getElementById('btn-checkout').addEventListener('click', () => {
+        if (ShopManager.getCart().length === 0) { alert('Your cart is empty!'); return; }
+        openDeliveryModal();
     });
+
+    if (deliveryForm) {
+        deliveryForm.addEventListener('submit', async () => {
+            const name    = document.getElementById('del-name')?.value.trim();
+            const phone   = document.getElementById('del-phone')?.value.trim();
+            const address = document.getElementById('del-address')?.value.trim();
+            const city    = document.getElementById('del-city')?.value.trim();
+            const pincode = document.getElementById('del-pincode')?.value.trim();
+            const landmark= document.getElementById('del-landmark')?.value.trim();
+            const notes   = document.getElementById('del-notes')?.value.trim();
+
+            if (!name || !phone || !address || !city || !pincode) {
+                deliveryFormErr.textContent = 'Please fill all required fields (*)';
+                return;
+            }
+            if (!/^\d{10}$/.test(phone)) {
+                deliveryFormErr.textContent = 'Enter a valid 10-digit phone number.';
+                return;
+            }
+            if (!/^\d{6}$/.test(pincode)) {
+                deliveryFormErr.textContent = 'Enter a valid 6-digit pincode.';
+                return;
+            }
+
+            const deliveryDetails = { name, phone, address, city, pincode, landmark, notes };
+
+            const confirmBtn = document.getElementById('delivery-confirm-btn');
+            if (confirmBtn) { confirmBtn.disabled = true; confirmBtn.textContent = 'Placing Order...'; }
+
+            const result = await ShopManager.placeOrder(user, deliveryDetails);
+
+            if (confirmBtn) { confirmBtn.disabled = false; confirmBtn.textContent = '✅ Confirm & Place Order'; }
+
+            if (!result.ok) {
+                deliveryFormErr.textContent = result.error || 'Failed to place order.';
+                return;
+            }
+
+            closeDeliveryModal();
+            closeCart();
+            updateCartBadge();
+            renderCartItems();
+            deliveryForm.reset();
+
+            const toast = document.getElementById('order-toast');
+            document.getElementById('order-toast-msg').textContent = `Order ${result.order.id} placed! Total: ₹${result.order.total}`;
+            toast.classList.remove('hidden');
+            toast.classList.add('show');
+            setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.classList.add('hidden'), 400); }, 4000);
+
+            renderOrders();
+        });
+    }
 
     /* ========= ORDERS TAB ========= */
     async function renderOrders() {

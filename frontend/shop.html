@@ -147,6 +147,57 @@
     </div>
   </div>
 
+  <!-- DELIVERY DETAILS MODAL -->
+  <div class="auth-modal-overlay" id="delivery-modal">
+    <div class="auth-modal" style="max-width:500px;">
+      <div class="auth-modal-inner" style="padding:2.2rem 2rem;">
+        <button class="auth-modal-close" id="delivery-modal-close" aria-label="Close">✕</button>
+        <h2 style="font-family:var(--font-head);font-size:1.35rem;font-weight:800;color:#fff;margin-bottom:0.3rem;">
+          🚚 Delivery <span class="gradient-text">Details</span>
+        </h2>
+        <p style="font-size:0.82rem;color:var(--text-dim);margin-bottom:1.4rem;">
+          Please fill in your delivery information to complete the order.
+        </p>
+        <form id="delivery-form" onsubmit="return false;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.9rem;">
+            <div class="auth-field">
+              <label for="del-name">Full Name *</label>
+              <input type="text" id="del-name" placeholder="e.g. Ravi Kumar" required />
+            </div>
+            <div class="auth-field">
+              <label for="del-phone">Phone Number *</label>
+              <input type="tel" id="del-phone" placeholder="e.g. 9876543210" maxlength="10" required />
+            </div>
+          </div>
+          <div class="auth-field">
+            <label for="del-address">House / Flat / Street Address *</label>
+            <input type="text" id="del-address" placeholder="e.g. 42B, 3rd Cross, MG Road" required />
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.9rem;">
+            <div class="auth-field">
+              <label for="del-city">City *</label>
+              <input type="text" id="del-city" placeholder="e.g. Chennai" required />
+            </div>
+            <div class="auth-field">
+              <label for="del-pincode">Pincode *</label>
+              <input type="text" id="del-pincode" placeholder="e.g. 600001" maxlength="6" required />
+            </div>
+          </div>
+          <div class="auth-field">
+            <label for="del-landmark">Landmark (optional)</label>
+            <input type="text" id="del-landmark" placeholder="e.g. Near City Bus Stand" />
+          </div>
+          <div class="auth-field" style="margin-bottom:0.5rem;">
+            <label for="del-notes">Order Notes (optional)</label>
+            <textarea id="del-notes" style="width:100%;min-height:60px;background:rgba(255,255,255,0.05);border:1.5px solid rgba(255,255,255,0.1);border-radius:10px;padding:0.65rem 1rem;color:var(--text);font-family:var(--font-body);font-size:0.88rem;outline:none;resize:vertical;" placeholder="Any special instructions..."></textarea>
+          </div>
+          <div id="delivery-form-err" style="color:#ff6060;font-size:0.82rem;text-align:center;margin-bottom:0.6rem;min-height:1rem;"></div>
+          <button type="submit" class="auth-submit-btn" id="delivery-confirm-btn">✅ Confirm & Place Order</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
   <script src="auth.js"></script>
   <script src="shop.js"></script>
   <script src="portal.js"></script>
