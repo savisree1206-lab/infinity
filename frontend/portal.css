@@ -1010,11 +1010,13 @@ select.portal-select:focus {
 .item-count-badge { font-size: 0.75rem; padding: 0.2rem 0.6rem; border-radius: 50px; background: rgba(180,79,255,0.12); color: var(--purple); border: 1px solid rgba(180,79,255,0.25); }
 .date-cell { font-size: 0.8rem; color: var(--text-dim); white-space: nowrap; }
 .status-select {
-  background: #1a1a2e; border: 1px solid rgba(255,255,255,0.18);
-  border-radius: 8px; padding: 0.35rem 0.6rem;
+  background: #1a1a2e url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBvbHlsaW5lIHBvaW50cz0iNiA5IDEyIDE1IDE4IDkiPjwvcG9seWxpbmU+PC9zdmc+") no-repeat right 0.5rem center / 0.8rem !important; border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 8px; padding: 0.35rem 1.8rem 0.35rem 0.6rem !important;
   color: #fff; font-family: var(--font-alt); font-size: 0.8rem;
   cursor: pointer; outline: none; transition: var(--transition);
-  appearance: auto;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
 }
 .status-select:focus { border-color: var(--blue); }
 .status-select option {
@@ -1032,11 +1034,13 @@ select.portal-select:focus {
 
 .order-filter-row { margin-top: 0.5rem; }
 .portal-select {
-  background: #1a1a2e; border: 1px solid rgba(255,255,255,0.18);
-  border-radius: 8px; padding: 0.45rem 0.9rem;
+  background: #1a1a2e url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBvbHlsaW5lIHBvaW50cz0iNiA5IDEyIDE1IDE4IDkiPjwvcG9seWxpbmU+PC9zdmc+") no-repeat right 0.7rem center / 0.9rem !important; border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 8px; padding: 0.45rem 2rem 0.45rem 0.9rem !important;
   color: #fff; font-family: var(--font-alt); font-size: 0.85rem;
   cursor: pointer; outline: none; transition: var(--transition);
-  appearance: auto;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
 }
 .portal-select:focus { border-color: var(--blue); }
 .portal-select option {
