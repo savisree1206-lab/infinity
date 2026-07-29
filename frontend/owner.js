@@ -311,7 +311,11 @@
               <td>
                 <span class="item-count-badge">${o.items.length} item${o.items.length > 1 ? 's' : ''}</span>
                 <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 4px;">
-                  ${o.items.map(i => `${i.qty}x ${i.name}`).join('<br>')}
+                  ${o.items.map(i => {
+                    const p = typeof ShopManager !== 'undefined' ? ShopManager.getProductById(i.productId) : null;
+                    const code = i.codeNumber || (p ? p.codeNumber : 'N/A');
+                    return `${i.qty}x ${i.name} <br><span style="font-size:0.65rem; opacity:0.8;">(ID: ${i.productId} | Code: ${code || 'N/A'})</span>`;
+                  }).join('<div style="margin-top:4px;"></div>')}
                 </div>
               </td>
               <td><strong>₹${o.total}</strong></td>

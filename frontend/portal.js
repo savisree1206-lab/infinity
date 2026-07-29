@@ -328,7 +328,11 @@
           <span class="order-date">${new Date(o.placedAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
         </div>
         <div class="order-items-preview">
-          ${o.items.map(i => `<span class="order-item-chip">${i.name} ×${i.qty}</span>`).join('')}
+          ${o.items.map(i => {
+            const p = typeof ShopManager !== 'undefined' ? ShopManager.getProductById(i.productId) : null;
+            const code = i.codeNumber || (p ? p.codeNumber : 'N/A');
+            return `<span class="order-item-chip">${i.name} ×${i.qty} (ID: ${i.productId} | Code: ${code || 'N/A'})</span>`;
+          }).join('')}
         </div>
         <div class="order-card-footer">
           <span class="order-total">Total: <strong>₹${o.total}</strong></span>

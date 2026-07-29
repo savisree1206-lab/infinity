@@ -529,7 +529,17 @@
           <span class="order-status-badge status-${o.status.toLowerCase()}">${o.status}</span>
         </div>
         <div class="order-items">
-          ${o.items.map(i => `<div class="order-item-row"><span>${i.qty}x ${i.name}</span><span>₹${i.subtotal}</span></div>`).join('')}
+          ${o.items.map(i => {
+            const p = typeof ShopManager !== 'undefined' ? ShopManager.getProductById(i.productId) : null;
+            const code = i.codeNumber || (p ? p.codeNumber : 'N/A');
+            return `<div class="order-item-row">
+              <span style="display:flex; flex-direction:column;">
+                <span>${i.qty}x ${i.name}</span>
+                <span style="font-size:0.7rem; opacity:0.7;">ID: ${i.productId} | Code: ${code || 'N/A'}</span>
+              </span>
+              <span>₹${i.subtotal}</span>
+            </div>`;
+          }).join('')}
         </div>
         <div class="order-footer">
           <span class="order-date">${new Date(o.placedAt).toLocaleDateString()}</span>
