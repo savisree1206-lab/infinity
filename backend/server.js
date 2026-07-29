@@ -15,8 +15,8 @@ const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/infinitese
 
 // Middleware
 app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 // Serve static files from the frontend directory locally
 if (process.env.VERCEL !== '1') {
@@ -222,7 +222,8 @@ app.post('/api/products', async (req, res) => {
     await product.save();
     res.json({ ok: true, product });
   } catch (err) {
-    res.status(500).json({ ok: false, error: 'Server error creating product.' });
+    console.error("Error creating product:", err);
+    res.status(500).json({ ok: false, error: 'Server error creating product. ' + (err.message || '') });
   }
 });
 

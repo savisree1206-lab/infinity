@@ -616,7 +616,15 @@
       }
 
       const existingProduct = originalId ? ShopManager.getProductById(originalId) : null;
-      const icon = existingProduct ? existingProduct.icon : '⚡';
+      const icon = existingProduct ? existingProduct.icon : '📦';
+
+      if (!originalId) {
+        const allProducts = ShopManager.getProducts();
+        if (allProducts.some(p => p.id === id)) {
+          productFormErr.textContent = 'A product with this ID already exists. Please use a unique Product Code (ID).';
+          return;
+        }
+      }
 
       const productData = { id, name, category, codeNumber, icon, price, stock, unit, desc, imageUrl };
       
