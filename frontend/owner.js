@@ -322,13 +322,13 @@
               <td class="date-cell">${new Date(o.placedAt).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' })}</td>
               <td><span class="order-status-badge status-${o.status.toLowerCase()}">${o.status}</span></td>
               ${!compact ? `
-              <td>
                 <select class="status-select" data-id="${o.id}">
                   <option value="Pending"    ${o.status==='Pending'?'selected':''}>Pending</option>
                   <option value="Processing" ${o.status==='Processing'?'selected':''}>Processing</option>
                   <option value="Fulfilled"  ${o.status==='Fulfilled'?'selected':''}>Fulfilled</option>
                   <option value="Cancelled"  ${o.status==='Cancelled'?'selected':''}>Cancelled</option>
                 </select>
+                <button class="nav-goto-dashboard download-bill-btn" data-id="${o.id}" style="margin-top: 8px; padding: 0.3rem 0.6rem; font-size: 0.75rem; width: 100%;">📄 Bill</button>
               </td>` : ''}
             </tr>
           `).join('')}
@@ -364,6 +364,13 @@
             const row = sel.closest('tr');
             if (row) { row.classList.add('row-flash'); setTimeout(() => row.classList.remove('row-flash'), 600); }
           } catch (e) {}
+        });
+      });
+
+      // Download Bill Button listener
+      container.querySelectorAll('.download-bill-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          downloadIndividualBill(btn.dataset.id);
         });
       });
     }
@@ -469,6 +476,171 @@
 
     const dateStr = new Date().toISOString().split('T')[0];
     doc.save(`Orders_Report_${filter}_${dateStr}.pdf`);
+  }
+
+  function downloadIndividualBill(orderId) {
+    if (!window.jspdf) {
+      alert("PDF library is not loaded.");
+      return;
+    }
+    const order = serverOrders.find(o => o.id === orderId);
+    if (!order) return;
+
+    function sanitizeText(text) {
+      if (!text) return '';
+      return text.toString().replace(/Ω/g, 'Ohm').replace(/μ/g, 'u').replace(/₹/g, 'Rs. ');
+    }
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF('portrait');
+
+    // Branding / Header
+    doc.setFontSize(22);
+    doc.setTextColor(20, 20, 20);
+    doc.setFont('helvetica', 'bold');
+    doc.text("Infinite Services", doc.internal.pageSize.getWidth() - 15, 20, { align: 'right' });
+    
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.text("Lets Learn, Implement and Innovate", doc.internal.pageSize.getWidth() - 15, 26, { align: 'right' });
+
+    doc.setFontSize(14);
+    doc.setTextColor(46, 125, 50); // Green color
+    doc.text("Thank You for Your Order!", doc.internal.pageSize.getWidth() / 2, 40, { align: 'center' });
+
+    // Order Details
+    doc.setFontSize(10);
+    doc.setTextColor(0, 0, 0);
+    
+    const formattedDate = new Date(order.placedAt).toLocaleString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: true });
+    
+    doc.setFont('helvetica', 'bold');
+    doc.text("Order ID:", 15, 55);
+    doc.setFont('helvetica', 'normal');
+    doc.text((order.id ? order.id.toUpperCase() : 'N/A'), 35, 55);
+
+    doc.setFont('helvetica', 'bold');
+    doc.text("Date:", doc.internal.pageSize.getWidth() - 65, 55);
+    doc.setFont('helvetica', 'normal');
+    doc.text(formattedDate, doc.internal.pageSize.getWidth() - 53, 55);
+
+    let customerName = order.deliveryDetails?.name || order.customerName || 'N/A';
+    let contact = order.deliveryDetails?.phone || order.customerEmail || 'N/A';
+    let address = 'N/A';
+    if (order.deliveryDetails) {
+      address = `${order.deliveryDetails.address || ''} ${order.deliveryDetails.city || ''} ${order.deliveryDetails.pincode ? '- ' + order.deliveryDetails.pincode : ''}`.trim();
+    }
+
+    doc.setFont('helvetica', 'bold');
+    doc.text("Name:", 15, 62);
+    doc.setFont('helvetica', 'normal');
+    doc.text(sanitizeText(customerName), 28, 62);
+
+    doc.setFont('helvetica', 'bold');
+    doc.text("Mobile:", 15, 69);
+    doc.setFont('helvetica', 'normal');
+    doc.text(sanitizeText(contact), 30, 69);
+
+    doc.setFont('helvetica', 'bold');
+    doc.text("Address:", 15, 76);
+    doc.setFont('helvetica', 'normal');
+    
+    const splitAddress = doc.splitTextToSize(sanitizeText(address), doc.internal.pageSize.getWidth() - 35);
+    doc.text(splitAddress, 32, 76);
+
+    const addressHeight = splitAddress.length * 5;
+    const tableStartY = 76 + addressHeight + 5;
+
+    // Items Table
+    const tableColumn = ["S.No", "Code", "Product", "Price (Rs.)", "Qty", "Amount (Rs.)"];
+    const tableRows = [];
+    let subTotal = 0;
+
+    if (order.items) {
+      order.items.forEach((item, index) => {
+        // Try to look up the code if not available in item
+        let code = item.codeNumber;
+        if (!code && typeof ShopManager !== 'undefined') {
+            const p = ShopManager.getProductById(item.productId);
+            if (p) code = p.codeNumber;
+        }
+        
+        const price = item.price || 0;
+        const amount = price * item.qty;
+        subTotal += amount;
+        
+        tableRows.push([
+          index + 1,
+          sanitizeText(code || '-'),
+          sanitizeText(item.name),
+          price.toFixed(2),
+          item.qty,
+          amount.toFixed(2)
+        ]);
+      });
+    }
+
+    doc.autoTable({
+      startY: tableStartY,
+      head: [tableColumn],
+      body: tableRows,
+      theme: 'grid',
+      styles: { fontSize: 9, cellPadding: 4, lineColor: [200, 200, 200], lineWidth: 0.1 },
+      headStyles: { fillColor: [240, 240, 240], textColor: [0, 0, 0], fontStyle: 'bold', halign: 'center' },
+      columnStyles: {
+        0: { halign: 'center', cellWidth: 15 },
+        1: { cellWidth: 25 },
+        2: { cellWidth: 'auto' },
+        3: { halign: 'right', cellWidth: 25 },
+        4: { halign: 'center', cellWidth: 15 },
+        5: { halign: 'right', cellWidth: 30 }
+      },
+      margin: { left: 15, right: 15 }
+    });
+
+    // Totals
+    const finalY = doc.lastAutoTable.finalY || tableStartY + 20;
+    
+    const deliveryCharge = Math.max(0, (order.total || 0) - subTotal);
+    const finalTotal = order.total || subTotal;
+
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'bold');
+    
+    doc.text("Sub Total (Rs.) :", doc.internal.pageSize.getWidth() - 45, finalY + 10, { align: 'right' });
+    doc.setFont('helvetica', 'normal');
+    doc.text(subTotal.toFixed(2), doc.internal.pageSize.getWidth() - 15, finalY + 10, { align: 'right' });
+
+    doc.setFont('helvetica', 'bold');
+    doc.text("Discount (Rs.) :", doc.internal.pageSize.getWidth() - 45, finalY + 18, { align: 'right' });
+    doc.setFont('helvetica', 'normal');
+    doc.text("0", doc.internal.pageSize.getWidth() - 15, finalY + 18, { align: 'right' });
+
+    doc.setFont('helvetica', 'bold');
+    doc.text("Delivery Charges (Rs.) :", doc.internal.pageSize.getWidth() - 45, finalY + 26, { align: 'right' });
+    doc.setFont('helvetica', 'normal');
+    doc.text(deliveryCharge.toFixed(2), doc.internal.pageSize.getWidth() - 15, finalY + 26, { align: 'right' });
+
+    doc.setFont('helvetica', 'bold');
+    doc.text("Total (Rs.) :", doc.internal.pageSize.getWidth() - 45, finalY + 34, { align: 'right' });
+    doc.setFont('helvetica', 'normal');
+    doc.text(finalTotal.toFixed(2), doc.internal.pageSize.getWidth() - 15, finalY + 34, { align: 'right' });
+
+    // Footer
+    const footerY = Math.max(finalY + 45, doc.internal.pageSize.getHeight() - 40);
+    doc.line(15, footerY - 5, doc.internal.pageSize.getWidth() - 15, footerY - 5);
+    
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'bold');
+    doc.text("No guarantee | No Warranty | No Exchange | No Return", 15, footerY + 2);
+    
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    const disclaimer = "We kindly inform you that all purchases are final. As we do not receive any guarantee, warranty, or return options from our suppliers, we are unable to offer the same to our customers. We sincerely request your understanding and support regarding this policy.";
+    const splitDisclaimer = doc.splitTextToSize(disclaimer, doc.internal.pageSize.getWidth() - 30);
+    doc.text(splitDisclaimer, 15, footerY + 8);
+    
+    doc.save(`Invoice_${order.id ? order.id.slice(-6).toUpperCase() : 'Order'}.pdf`);
   }
 
   const downloadPdfBtn = document.getElementById('download-pdf-btn');
