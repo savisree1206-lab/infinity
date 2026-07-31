@@ -380,6 +380,78 @@
 
   document.getElementById('order-status-filter').addEventListener('change', renderAllOrders);
 
+  /* ========= PDF EXPORT ========= */
+  function downloadOrdersPDF() {
+    const filter = document.getElementById('order-status-filter').value;
+    let orders = serverOrders;
+    if (filter !== 'All') orders = orders.filter(o => o.status === filter);
+
+    if (orders.length === 0) {
+      alert("No orders to export for the current filter.");
+      return;
+    }
+
+    // Verify jsPDF is loaded
+    if (!window.jspdf) {
+      alert("PDF library is not loaded. Please try again later.");
+      return;
+    }
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF('landscape'); // Landscape for more space
+
+    doc.setFontSize(18);
+    doc.text(`Orders Report - ${filter !== 'All' ? filter : 'All Statuses'}`, 14, 22);
+    
+    doc.setFontSize(11);
+    doc.setTextColor(100);
+    doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 30);
+
+    const tableColumn = ["Order ID", "Customer", "Contact", "Total", "Status", "Date", "Items summary"];
+    const tableRows = [];
+
+    orders.forEach(order => {
+      const orderId = order.id ? order.id.slice(-6).toUpperCase() : 'N/A';
+      
+      let customerName = 'N/A';
+      let contact = 'N/A';
+      if (order.deliveryDetails) {
+         customerName = order.deliveryDetails.name || 'N/A';
+         contact = order.deliveryDetails.phone || order.customerEmail || 'N/A';
+      } else {
+         customerName = order.customerName || 'N/A';
+         contact = order.customerEmail || 'N/A';
+      }
+
+      const total = `Rs. ${order.total || 0}`;
+      const status = order.status || 'Pending';
+      const date = new Date(order.placedAt).toLocaleDateString('en-IN');
+      const items = order.items ? order.items.map(i => `${i.qty}x ${i.name}`).join(', ') : 'No items';
+
+      tableRows.push([orderId, customerName, contact, total, status, date, items]);
+    });
+
+    doc.autoTable({
+      startY: 36,
+      head: [tableColumn],
+      body: tableRows,
+      theme: 'grid',
+      styles: { fontSize: 9, cellPadding: 3 },
+      headStyles: { fillColor: [41, 128, 185] },
+      columnStyles: {
+        6: { cellWidth: 80 } // Give items column more space
+      }
+    });
+
+    const dateStr = new Date().toISOString().split('T')[0];
+    doc.save(`Orders_Report_${filter}_${dateStr}.pdf`);
+  }
+
+  const downloadPdfBtn = document.getElementById('download-pdf-btn');
+  if (downloadPdfBtn) {
+    downloadPdfBtn.addEventListener('click', downloadOrdersPDF);
+  }
+
   /* ========= BOOKINGS TAB ========= */
   function renderBookings() {
     const container = document.getElementById('all-bookings-table');

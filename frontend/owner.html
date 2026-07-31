@@ -130,7 +130,8 @@
       <section class="portal-tab" id="tab-orders">
         <div class="tab-header">
           <h1 class="tab-title">📦 All <span class="gradient-text">Orders</span></h1>
-          <div class="order-filter-row">
+          <div class="order-filter-row" style="display: flex; gap: 1rem; align-items: center;">
+            <button id="download-pdf-btn" class="nav-goto-dashboard" style="font-size: 0.85rem; padding: 0.6rem 1.2rem; background: var(--glass-bg); border: 1px solid rgba(255, 255, 255, 0.1);">📥 Download PDF</button>
             <select id="order-status-filter" class="portal-select">
               <option value="All">All Statuses</option>
               <option value="Pending">Pending</option>
@@ -270,6 +271,8 @@
     </div>
   </div>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
   <script src="auth.js"></script>
   <script src="shop.js"></script>
   <script src="owner.js"></script>
