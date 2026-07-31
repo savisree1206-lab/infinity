@@ -322,13 +322,14 @@
               <td class="date-cell">${new Date(o.placedAt).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' })}</td>
               <td><span class="order-status-badge status-${o.status.toLowerCase()}">${o.status}</span></td>
               ${!compact ? `
+              <td style="text-align: center; vertical-align: middle;">
                 <select class="status-select" data-id="${o.id}">
                   <option value="Pending"    ${o.status==='Pending'?'selected':''}>Pending</option>
                   <option value="Processing" ${o.status==='Processing'?'selected':''}>Processing</option>
                   <option value="Fulfilled"  ${o.status==='Fulfilled'?'selected':''}>Fulfilled</option>
                   <option value="Cancelled"  ${o.status==='Cancelled'?'selected':''}>Cancelled</option>
                 </select>
-                <button class="nav-goto-dashboard download-bill-btn" data-id="${o.id}" style="margin-top: 8px; padding: 0.3rem 0.6rem; font-size: 0.75rem; width: 100%;">📄 Bill</button>
+                <button class="nav-goto-dashboard download-bill-btn" data-id="${o.id}" style="margin-top: 8px; padding: 0.35rem 0.8rem; font-size: 0.78rem; width: 100%; display: block;">📄 Bill</button>
               </td>` : ''}
             </tr>
           `).join('')}
