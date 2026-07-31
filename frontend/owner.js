@@ -397,6 +397,15 @@
       return;
     }
 
+    // Helper to sanitize unsupported unicode characters for standard jsPDF fonts
+    function sanitizeText(text) {
+      if (!text) return '';
+      return text.toString()
+        .replace(/Ω/g, 'Ohm')
+        .replace(/μ/g, 'u')
+        .replace(/₹/g, 'Rs. ');
+    }
+
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF('landscape'); // Landscape for more space
 
@@ -428,7 +437,15 @@
       const date = new Date(order.placedAt).toLocaleDateString('en-IN');
       const items = order.items ? order.items.map(i => `${i.qty}x ${i.name}`).join(', ') : 'No items';
 
-      tableRows.push([orderId, customerName, contact, total, status, date, items]);
+      tableRows.push([
+        sanitizeText(orderId), 
+        sanitizeText(customerName), 
+        sanitizeText(contact), 
+        sanitizeText(total), 
+        sanitizeText(status), 
+        sanitizeText(date), 
+        sanitizeText(items)
+      ]);
     });
 
     doc.autoTable({
@@ -436,11 +453,18 @@
       head: [tableColumn],
       body: tableRows,
       theme: 'grid',
-      styles: { fontSize: 9, cellPadding: 3 },
-      headStyles: { fillColor: [41, 128, 185] },
+      styles: { fontSize: 9, cellPadding: 3, overflow: 'linebreak' },
+      headStyles: { fillColor: [41, 128, 185], halign: 'left' },
       columnStyles: {
-        6: { cellWidth: 80 } // Give items column more space
-      }
+        0: { cellWidth: 20 },
+        1: { cellWidth: 35 },
+        2: { cellWidth: 45 },
+        3: { cellWidth: 25 },
+        4: { cellWidth: 25 },
+        5: { cellWidth: 25 },
+        6: { cellWidth: 'auto' } // Let items summary wrap and take remaining space
+      },
+      margin: { top: 36, left: 14, right: 14 }
     });
 
     const dateStr = new Date().toISOString().split('T')[0];
