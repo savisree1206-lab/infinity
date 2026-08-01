@@ -271,6 +271,72 @@
     </div>
   </div>
 
+  <!-- HIDDEN INVOICE TEMPLATE for PDF generation -->
+  <div id="invoice-template" style="display:none; position:fixed; top:-9999px; left:-9999px; width:210mm; background:#fff; font-family:Arial,sans-serif; font-size:12px; color:#000; padding:15mm; box-sizing:border-box;">
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:16px; border-bottom:2px solid #333; padding-bottom:12px;">
+      <div>
+        <h1 id="inv-company" style="margin:0; font-size:22px; font-weight:bold; color:#1a1a1a;">Infinite Services</h1>
+        <p id="inv-tagline" style="margin:4px 0 0 0; font-size:11px; color:#666;">Lets Learn, Implement and Innovate</p>
+      </div>
+      <div style="text-align:right;">
+        <h2 style="margin:0; font-size:16px; font-weight:bold; color:#2e7d32;">INVOICE</h2>
+        <p id="inv-date" style="margin:4px 0 0 0; font-size:11px; color:#555;"></p>
+      </div>
+    </div>
+    <div style="display:flex; justify-content:space-between; margin-bottom:16px;">
+      <div style="background:#f5f5f5; padding:10px 14px; border-radius:6px; flex:1; margin-right:10px;">
+        <p style="margin:0 0 4px 0; font-size:10px; font-weight:bold; color:#888; text-transform:uppercase;">Bill To</p>
+        <p id="inv-name" style="margin:0 0 3px 0; font-size:13px; font-weight:bold; color:#1a1a1a;"></p>
+        <p id="inv-phone" style="margin:0 0 3px 0; font-size:11px; color:#555;"></p>
+        <p id="inv-address" style="margin:0; font-size:11px; color:#555;"></p>
+      </div>
+      <div style="background:#f5f5f5; padding:10px 14px; border-radius:6px; min-width:160px; text-align:right;">
+        <p style="margin:0 0 4px 0; font-size:10px; font-weight:bold; color:#888; text-transform:uppercase;">Order Details</p>
+        <p id="inv-orderid" style="margin:0 0 3px 0; font-size:11px; color:#555;"></p>
+        <p id="inv-status" style="margin:0; font-size:11px; font-weight:bold; color:#2e7d32;"></p>
+      </div>
+    </div>
+    <table id="inv-items-table" style="width:100%; border-collapse:collapse; margin-bottom:16px;">
+      <thead>
+        <tr style="background:#1a1a2e; color:#fff;">
+          <th style="padding:8px 6px; text-align:center; font-size:11px; width:35px;">#</th>
+          <th style="padding:8px 6px; text-align:left; font-size:11px; width:60px;">Code</th>
+          <th style="padding:8px 6px; text-align:left; font-size:11px;">Product</th>
+          <th style="padding:8px 6px; text-align:right; font-size:11px; width:70px;">Price (₹)</th>
+          <th style="padding:8px 6px; text-align:center; font-size:11px; width:40px;">Qty</th>
+          <th style="padding:8px 6px; text-align:right; font-size:11px; width:80px;">Amount (₹)</th>
+        </tr>
+      </thead>
+      <tbody id="inv-items-body"></tbody>
+    </table>
+    <div style="display:flex; justify-content:flex-end; margin-bottom:16px;">
+      <table style="min-width:220px; border-collapse:collapse;">
+        <tr>
+          <td style="padding:4px 10px; font-size:11px; color:#555;">Sub Total</td>
+          <td style="padding:4px 10px; font-size:11px; text-align:right; font-weight:bold;">₹<span id="inv-subtotal"></span></td>
+        </tr>
+        <tr>
+          <td style="padding:4px 10px; font-size:11px; color:#555;">Discount</td>
+          <td style="padding:4px 10px; font-size:11px; text-align:right;">₹0.00</td>
+        </tr>
+        <tr>
+          <td style="padding:4px 10px; font-size:11px; color:#555;">Delivery Charges</td>
+          <td style="padding:4px 10px; font-size:11px; text-align:right;">₹<span id="inv-delivery"></span></td>
+        </tr>
+        <tr style="border-top:2px solid #333;">
+          <td style="padding:6px 10px; font-size:13px; font-weight:bold;">Total</td>
+          <td style="padding:6px 10px; font-size:13px; font-weight:bold; text-align:right; color:#2e7d32;">₹<span id="inv-total"></span></td>
+        </tr>
+      </table>
+    </div>
+    <div style="border-top:1px solid #ccc; padding-top:10px; margin-top:4px;">
+      <p style="margin:0 0 4px 0; font-size:10px; font-weight:bold; color:#c00;">No Guarantee | No Warranty | No Exchange | No Return</p>
+      <p style="margin:0; font-size:9px; color:#777; line-height:1.5;">We kindly inform you that all purchases are final. As we do not receive any guarantee, warranty, or return options from our suppliers, we are unable to offer the same to our customers. We sincerely request your understanding and support regarding this policy.</p>
+    </div>
+    <p style="margin:12px 0 0 0; font-size:10px; text-align:center; color:#aaa;">Thank you for your order! — Infinite Services</p>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
   <script src="auth.js"></script>
